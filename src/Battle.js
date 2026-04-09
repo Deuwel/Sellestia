@@ -86,21 +86,29 @@ export class Battle {
         
         dmg = Math.max(1, dmg);
         
-        // 데미지 적용
-        if (defender.currentHp !== undefined) defender.currentHp -= dmg;
-        else defender.hp -= dmg;
+        // 1. 데미지 적용 및 음수 방지 처리
+        if (defender.currentHp !== undefined) {
+            defender.currentHp -= dmg;
+            // 체력이 0 미만으로 내려가지 않도록 고정
+            defender.currentHp = Math.max(0, defender.currentHp);
+        } else {
+            defender.hp -= dmg;
+            // 몬스터 등 일반 객체도 0 미만 방지
+            defender.hp = Math.max(0, defender.hp);
+        }
 
-        // UI 효과: 플로팅 데미지 & 로그
+        // 2. UI 효과 연출
         this.ui.showDamage(targetCardId, dmg, isCrit);
         const type = attacker.name === "Adventurer" ? 'p' : 'm';
         this.ui.log(`${attacker.name}: ${dmg} 데미지! ${isCrit ? '💥' : ''}`, type);
-        this.ui.showDamage(targetCardId, dmg, isCrit);
-        this.ui.applyHitEffect(targetCardId); // 흔들림 + 빨간 섬광 추가
+        
+        // 3. UI 갱신 (이미 내부 데이터가 0 이상이므로 UI도 0으로 정상 표기됨)
         this.ui.updatePlayer(this.player);
         this.ui.updateMonster(this.currentEnemy);
 
-        // 사망 판정
-        if ((defender.currentHp ?? defender.hp) <= 0) {
+        // 4. 사망 판정 (깔끔하게 0 이하인지 확인)
+        const currentDefenderHp = (defender.currentHp !== undefined) ? defender.currentHp : defender.hp;
+        if (currentDefenderHp <= 0) {
             this.endLoop(defender === this.player);
         }
     }
