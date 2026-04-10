@@ -41,42 +41,58 @@
         
         
         <main class="battle-field">
-            
-            <div class="arena">
-                <div class="dungeon-info">
-                    <h2 class="dungeon-name" id="dungeon-title">평원</h2>
-                    <div class="wave-count">WAVE <span id="current-wave">1</span> / 10</div>
-                </div>
-                <div class="character-card" id="player-card">
-                    <div class="image-box">👤</div>
-                    <div class="info" style="margin-bottom: 10px;">
-                        <span style="color: #a29bfe; font-weight: bold;">Lv.<span id="p-level">1</span></span>
-                        <strong id="p-name">Adventurer</strong>
+            <div class="dungeon-info">
+                <h2 class="dungeon-name" id="dungeon-title">평원</h2>
+                <div class="wave-count">WAVE <span id="current-wave">1</span> / 10</div>
+            </div>
+
+            <div class="battle-main-zone">
+                <div class="arena">
+                    <div class="character-card" id="player-card">
+                        <div class="image-box">👤</div>
+                        <div class="info" style="margin-bottom: 10px;">
+                            <span style="color: #a29bfe; font-weight: bold;">Lv.<span id="p-level">1</span></span>
+                            <strong id="p-name">Adventurer</strong>
+                        </div>
+                        <div class="bar-bg hp">
+                            <div id="p-hp-bar" class="fill"></div>
+                            <span id="p-hp-text">0 / 0</span>
+                        </div>
+                        <div class="bar-bg sp-bar" style="height: 8px;">
+                            <div id="p-sp-bar" class="fill"></div>
+                        </div>
                     </div>
-                    <div class="bar-bg hp">
-                        <div id="p-hp-bar" class="fill"></div>
-                        <span id="p-hp-text">0 / 0</span>
-                    </div>
-                    <div class="bar-bg sp-bar" style="height: 8px;">
-                        <div id="p-sp-bar" class="fill"></div>
+
+                    <div class="vs">VS</div>
+
+                    <div class="character-card" id="monster-card">
+                        <div class="image-box" id="m-icon">❓</div>
+                        <div class="info" style="margin-bottom: 10px;">
+                            <span style="color: #ff7675; font-weight: bold;">Lv.<span id="m-level">1</span></span>
+                            <strong id="m-name">-</strong>
+                        </div>
+                        <div class="bar-bg hp">
+                            <div id="m-hp-bar" class="fill"></div>
+                            <span id="m-hp-text">0 / 0</span>
+                        </div>
+                        <div class="bar-bg sp-bar" style="height: 8px;">
+                            <div id="m-sp-bar" class="fill"></div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="vs">VS</div>
+                <div class="action-bar">
+                    <button id="btn-potion" class="action-btn">
+                        <div class="btn-icon">🧪</div> 
+                        <div class="btn-label">포션</div>
+                        <div class="btn-count-text">잔여 : <span id="potion-qty" class="btn-count-num">2</span></div>
+                    </button>
 
-                <div class="character-card" id="monster-card">
-                    <div class="image-box" id="m-icon">❓</div>
-                    <div class="info" style="margin-bottom: 10px;">
-                        <span style="color: #ff7675; font-weight: bold;">Lv.<span id="m-level">1</span></span>
-                        <strong id="m-name">-</strong>
-                    </div>
-                    <div class="bar-bg hp">
-                        <div id="m-hp-bar" class="fill"></div>
-                        <span id="m-hp-text">0 / 0</span>
-                    </div>
-                    <div class="bar-bg sp-bar" style="height: 8px;">
-                        <div id="m-sp-bar" class="fill"></div>
-                    </div>
+                    <button class="action-btn locked" disabled>
+                        <div class="btn-icon">🔒</div>
+                        <div class="btn-label">잠김</div>
+                        <div class="btn-count-text">Lv.5 해금</div>
+                    </button>
                 </div>
             </div>
 

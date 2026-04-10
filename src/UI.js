@@ -63,13 +63,26 @@ export const UI = {
     showDamage(targetId, amount, isCrit) {
         const card = document.getElementById(targetId);
         if (!card) return;
+
         const damageEl = document.createElement('div');
+        // isCrit이 true면 'crit' 클래스가 붙어 CSS 효과가 적용됨
         damageEl.className = `damage-text ${isCrit ? 'crit' : ''}`;
-        damageEl.innerText = amount;
+        
+        // 치명타일 때 텍스트 앞에 아이콘 추가 (선택 사항)
+        damageEl.innerText = isCrit ? `💥 ${amount}` : amount;
+
         card.appendChild(damageEl);
-        setTimeout(() => damageEl.remove(), 800);
+
+        // 연출이 끝난 후 요소 제거
+        setTimeout(() => {
+            if (damageEl.parentNode) {
+                damageEl.remove();
+            }
+        }, 800);
+
         this.applyHitEffect(targetId);
     },
+
     applyHitEffect(targetId) {
         const card = document.getElementById(targetId);
         if (!card) return;
@@ -81,6 +94,37 @@ export const UI = {
         setTimeout(() => {
             card.classList.remove('hit-shake', 'hit-flash');
         }, 300);
+    },
+    // 회복 효과 연출
+    showHeal(targetId, amount) {
+        const card = document.getElementById(targetId);
+        if (!card) return;
+
+        const healEl = document.createElement('div');
+        healEl.className = 'heal-effect';
+        healEl.innerText = `+${amount}`; // 숫자만 깔끔하게
+        
+        // 카드 중앙 부근에 위치하도록 (CSS의 translate(-50%, 0)와 함께 작동)
+        healEl.style.top = '30%'; 
+        
+        card.appendChild(healEl);
+        
+        // 애니메이션이 부드럽게 끝난 후(1.5초) 제거
+        setTimeout(() => healEl.remove(), 1500);
+
+        // 카드 반짝임 효과도 부드럽게
+        card.style.transition = 'filter 0.5s ease';
+        card.style.filter = 'brightness(1.4) drop-shadow(0 0 15px #2ed573)';
+        setTimeout(() => {
+            card.style.filter = 'none';
+        }, 600);
+    },
+
+    updatePotionUI(count, canUse) {
+        const btn = document.getElementById('btn-potion');
+        const qty = document.getElementById('potion-qty');
+        if (qty) qty.innerText = count;
+        if (btn) btn.disabled = !canUse || count <= 0;
     },
 
     updateDungeon(name, wave) {

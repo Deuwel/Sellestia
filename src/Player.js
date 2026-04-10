@@ -11,6 +11,9 @@ export class Player {
         this.maxHp = 0;
         this.updateDerivedStats();
         this.hp = this.maxHp;
+        this.potionCount = 2; // 최대 소지량 2로 변경
+        this.maxPotionCount = 2;
+        this.usedPotionInBattle = false; // 이번 전투에서 사용 여부
     }
 
     updateDerivedStats() {
@@ -25,6 +28,18 @@ export class Player {
 
     onEncounter() {
         this.hp = Math.min(this.maxHp, this.hp + this.hpRegen);
+        this.usedPotionInBattle = false; // 새로운 적을 만나면 사용 가능하도록 리셋
+    }
+
+    usePotion() {
+        if (this.potionCount > 0 && !this.usedPotionInBattle && this.hp > 0) {
+            const healAmount = Math.floor(this.maxHp * 0.3);
+            this.hp = Math.min(this.maxHp, this.hp + healAmount);
+            this.potionCount--;
+            this.usedPotionInBattle = true;
+            return healAmount;
+        }
+        return 0;
     }
 
     getAttackInterval() {

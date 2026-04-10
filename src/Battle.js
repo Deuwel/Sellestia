@@ -12,8 +12,30 @@ export class Battle {
         // 현재 채워진 속도 게이지 (0~100)
         this.pProgress = 0;
         this.mProgress = 0;
+        this.initControls();
     }
 
+    initControls() {
+            const potionBtn = document.getElementById('btn-potion');
+            if (potionBtn) {
+                potionBtn.onclick = () => {
+                    // 사망했거나 이미 이번 판에 썼으면 리턴
+                    if (this.player.hp <= 0 || this.player.usedPotionInBattle) return;
+
+                    const healAmount = this.player.usePotion();
+                    if (healAmount > 0) {
+                        this.ui.showHeal('player-card', healAmount);
+                        this.ui.updatePlayer(this.player);
+                        
+                        // UI에서 버튼 비활성화 (false 전달)
+                        this.ui.updatePotionUI(this.player.potionCount, false);
+                        
+                        this.ui.log(`🧪 포션 사용! 체력을 ${healAmount} 회복했습니다.`, 'sys');
+                    }
+                };
+            }
+        }
+    
     startDungeon() {
         this.enemyCount = 0;
         this.ui.log("🚩 Sellestia의 깊은 곳으로 향합니다.", "sys");
@@ -41,7 +63,7 @@ export class Battle {
         this.player.onEncounter();
         this.pProgress = 0;
         this.mProgress = 0;
-        
+        this.ui.updatePotionUI(this.player.potionCount, true);
         this.ui.updatePlayer(this.player);
         this.ui.updateMonster(this.currentEnemy);
         this.ui.log(`${this.enemyCount}번째 조우: Lv.${this.currentEnemy.level} ${this.currentEnemy.name}`, "sys");
@@ -49,7 +71,7 @@ export class Battle {
 
         this.startLoop();
     }
-
+    
     startLoop() {
         this.battleTimer = setInterval(() => {
             this.pProgress += (this.player.speed / 100); 
