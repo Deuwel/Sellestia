@@ -54,15 +54,17 @@ export const UI = {
     updateMonster(monster) {
         if (!monster) return;
         const iconBox = document.getElementById('m-icon');
-        if (monster.img) {
-        // 이미지가 있으면 img 태그 삽입
+        if (monster && monster.img && monster.img !== "") {
         iconBox.innerHTML = `<img src="${monster.img}" alt="${monster.name}" class="monster-sprite">`;
         } else {
-            // 이미지 경로가 없으면 기존처럼 이모지나 물음표 표시
-            iconBox.innerHTML = `❓`;
+        // 이미지가 없으면 'undefined' 대신 이모지나 빈 칸 출력
+        iconBox.innerHTML = `<span style="font-size: 2rem;">❓</span>`;
         }
-        document.getElementById('m-level').innerText = monster.level;
-        document.getElementById('m-name').innerText = monster.name;
+
+        
+        // 2. 텍스트 처리 (데이터가 없을 때를 대비해 Optional Chaining 사용)
+        document.getElementById('m-name').innerText = monster?.name || "찾는 중...";
+        document.getElementById('m-level').innerText = monster?.level || "1";
         document.getElementById('m-icon').innerText = monster.icon;
         document.getElementById('m-hp-bar').style.width = `${(monster.currentHp / monster.hp) * 100}%`;
         document.getElementById('m-hp-text').innerText = `${Math.floor(monster.currentHp)} / ${monster.hp}`;
