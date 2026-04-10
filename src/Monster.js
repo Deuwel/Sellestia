@@ -24,11 +24,10 @@ export const DUNGEON_POOL = {
 // src/Monster.js
 export class Monster {
     constructor(data) {
-        // 기존 속성들을 복사
         Object.assign(this, data);
-        
-        // [중요] 데이터에 img가 있다면 명시적으로 할당, 없으면 빈 문자열
-        this.img = data.img || ""; 
-        this.currentHp = this.hp;
+        // data.hp가 숫자인지 확인하고, currentHp를 반드시 초기화합니다.
+        this.hp = Number(data.hp) || 10;
+        this.currentHp = this.hp; 
+        this.exp = Number(data.exp) || (this.level * 10);
     }
 }

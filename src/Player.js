@@ -47,7 +47,8 @@ export class Player {
     }
 
     gainExp(amount) {
-        this.exp += amount;
+    const validAmount = Number(amount) || 0; // 숫자가 아니면 0으로 처리
+    this.exp = (Number(this.exp) || 0) + validAmount;
         if (this.exp >= this.maxExp) this.levelUp();
     }
 

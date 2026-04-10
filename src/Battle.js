@@ -148,8 +148,7 @@ export class Battle {
         this.ui.updateMonster(this.currentEnemy);
 
         // 4. 사망 판정 (깔끔하게 0 이하인지 확인)
-        const currentDefenderHp = (defender.currentHp !== undefined) ? defender.currentHp : defender.hp;
-        if (currentDefenderHp <= 0) {
+        if (defender.currentHp <= 0) {
             this.endLoop(defender === this.player);
         }
     }
