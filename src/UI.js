@@ -53,6 +53,14 @@ export const UI = {
 
     updateMonster(monster) {
         if (!monster) return;
+        const iconBox = document.getElementById('m-icon');
+        if (monster.img) {
+        // 이미지가 있으면 img 태그 삽입
+        iconBox.innerHTML = `<img src="${monster.img}" alt="${monster.name}" class="monster-sprite">`;
+        } else {
+            // 이미지 경로가 없으면 기존처럼 이모지나 물음표 표시
+            iconBox.innerHTML = `❓`;
+        }
         document.getElementById('m-level').innerText = monster.level;
         document.getElementById('m-name').innerText = monster.name;
         document.getElementById('m-icon').innerText = monster.icon;

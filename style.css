@@ -84,13 +84,15 @@ body {
 
 /* 4. 우측 메인 전투 필드 */
 
+/* 2. 중앙 메인 존 (아레나와 버튼들 위로 끌어올리기) */
 .battle-main-zone {
-    flex-grow: 1; 
+    flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: center; /* 아레나와 버튼을 수직 중앙에 배치 */
+    justify-content: flex-start; /* 중앙 정렬에서 '상단 정렬'로 변경 */
     align-items: center;
-    gap: 40px; /* 아레나와 액션바 사이의 간격 */
+    padding-top: 20px; /* 던전 정보 바로 아래에서 시작 */
+    gap: 30px; /* 아레나와 액션 바 사이 간격은 적절히 유지 */
 }
 
 .battle-field {
@@ -171,17 +173,45 @@ body {
 
 /* 6. 하단 배틀 로그 */
 .log-container {
-    height: 250px; /* 높이 복구 */
+    height: 350px; /* 적절한 높이 고정 */
     width: 100%;
-    background: rgba(20, 20, 30, 0.9);
+    background: rgba(10, 10, 15, 0.95);
     border-top: 1px solid #2d3436;
+    display: flex;
+    flex-direction: column;
+    z-index: 10; /* 다른 요소에 가려지지 않게 설정 */
+    /* 로그가 battle-field 밖으로 나가지 않도록 설정 */
+    flex-shrink: 0; 
 }
-.log-header { padding: 10px 15px; background: #1c1c2e; font-size: 12px; color: #888; border-bottom: 1px solid var(--border-color); font-weight: bold; }
-.log-content { 
-    flex: 1; padding: 15px; overflow-y: auto; 
-    font-family: 'Consolas', monospace; font-size: 15px; 
-    display: flex; flex-direction: column-reverse; 
+.log-header {
+    padding: 10px 20px;
+    font-size: 0.8rem;
+    color: #636e72;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
+
+.log-content {
+    flex: 1;
+    padding: 15px 20px;
+    /* 🔥 스크롤 활성화 핵심 설정 */
+    overflow-y: auto; 
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+/* 스크롤바 디자인 (심연 테마에 맞게) */
+.log-content::-webkit-scrollbar {
+    width: 6px;
+}
+.log-content::-webkit-scrollbar-thumb {
+    background: #2d3436;
+    border-radius: 3px;
+}
+.log-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
 .log-line { margin-bottom: 8px; line-height: 1.6; }
 .log-p { color: #74b9ff; }
 .log-m { color: #ff7675; }
@@ -223,7 +253,8 @@ body {
 /* 던전 정보 스타일 (중앙 상단) */
 .dungeon-info {
     text-align: center;
-    padding-top: 40px;
+    padding-top: 100px; /* 30px -> 60px로 늘려 살짝 아래로 내림 */
+    padding-bottom: 50px;
     height: 120px;
     width: 100%;
 }
@@ -235,13 +266,16 @@ body {
     margin: 0 0 15px 0; /* 아래쪽 마진을 15px 줘서 Wave와 간격 띄움 */
     letter-spacing: 4px; /* 글자 사이 자간을 넓혀 고급스럽게 */
 }
-.wave-count { 
-    font-size: 1.2rem; 
-    color: var(--text-dim); 
-    letter-spacing: 3px; 
-    background: rgba(0, 0, 0, 0.4); /* 살짝 배경을 넣어 가독성 향상 */
-    padding: 5px 20px;
+.wave-count {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 6px 16px;
+    /* 주변 카드들과 어울리는 어두운 반투명 배경으로 통일 */
+    background: rgba(45, 52, 54, 0.6); 
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 20px;
+    font-size: 0.9rem;
+    color: #dfe6e9;
 }
 
 /* 경험치 상세 텍스트 */
@@ -252,6 +286,7 @@ body {
     justify-content: center;
     gap: 20px;
     /* 여기서 높이를 살짝 주어 로그와 너무 붙지 않게 조절 */
+    margin-top: 50px;
     margin-bottom: 20px;
 }
 
@@ -355,4 +390,32 @@ body {
 @keyframes flash {
     from { opacity: 1; }
     to { opacity: 0; }
+}
+
+
+/* 몬스터 아이콘 박스 내부 정렬 */
+#m-icon {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 몬스터 이미지 스타일 */
+.monster-sprite {
+    max-width: 90%;
+    max-height: 90%;
+    object-fit: contain;
+    
+    /* 픽셀 아트를 선명하게 (중요!) */
+    image-rendering: pixelated; 
+    
+    /* 살아있는 느낌을 주는 애니메이션 */
+    animation: monsterFloat 3s ease-in-out infinite;
+}
+
+@keyframes monsterFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
 }
