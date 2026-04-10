@@ -24,10 +24,15 @@ export const DUNGEON_POOL = {
 // src/Monster.js
 export class Monster {
     constructor(data) {
+        // 모든 속성을 복사하되, 핵심 수치는 숫자로 강제 변환
         Object.assign(this, data);
-        // data.hp가 숫자인지 확인하고, currentHp를 반드시 초기화합니다.
+        
+        this.level = Number(data.level) || 1;
         this.hp = Number(data.hp) || 10;
-        this.currentHp = this.hp; 
+        this.currentHp = this.hp; // 👈 0/0 방지를 위해 반드시 여기서 할당
+        this.atk = Number(data.atk) || 2;
+        this.def = Number(data.def) || 0;
+        this.speed = Number(data.speed) || 100;
         this.exp = Number(data.exp) || (this.level * 10);
     }
 }

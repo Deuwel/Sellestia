@@ -8,7 +8,6 @@ export class Battle {
         this.enemyCount = 0;
         this.currentEnemy = null;
         this.battleTimer = null; // 게이지 계산기
-        
         // 현재 채워진 속도 게이지 (0~100)
         this.pProgress = 0;
         this.mProgress = 0;
@@ -51,39 +50,39 @@ export class Battle {
             return;
         }
 
-        // [중요] baseData를 먼저 정의해야 합니다!
-        // 현재 던전의 데이터 풀에서 무작위로 하나를 선택합니다.
+        // 1. 원본 데이터 선택
         const baseData = this.dungeonData[Math.floor(Math.random() * this.dungeonData.length)];
-        console.log("원본 데이터 img:", baseData.img);
-        let data; // 실제 생성에 사용될 최종 데이터 객체
+        
+        // 2. 최종 데이터 객체 생성 (기본 능력치 보장)
+        let data = { ...baseData }; 
 
+        // 3. 상황별 능력치 조정 (보스 vs 일반)
         if (this.enemyCount === 10) {
-            // 보스: 원본 데이터(...baseData)를 복사하고 능력치만 덮어쓰기
-            data = { 
-                ...baseData, 
-                name: `${baseData.name} (BOSS)`, 
-                hp: baseData.hp * 4, 
-                atk: baseData.atk * 1.5, 
-                level: this.player.level + 2 
-            };
+            data.name = `${baseData.name} (BOSS)`;
+            data.level = this.player.level + 2;
+            data.hp = Math.floor(baseData.hp * 4);
+            data.atk = Math.floor(baseData.atk * 1.5);
         } else {
-            // 일반: 원본 데이터(...baseData)를 복사하고 레벨만 조정
-            data = { 
-                ...baseData, 
-                level: Math.max(1, this.player.level + Math.floor(Math.random() * 3) - 1) 
-            };
+            data.level = Math.max(1, this.player.level + Math.floor(Math.random() * 3) - 1);
+            // 일반 몬스터는 기본 hp를 명시적으로 재할당하여 손실 방지
+            data.hp = baseData.hp; 
         }
 
-        // 수정된 데이터를 바탕으로 몬스터 인스턴스 생성
+        // 4. 몬스터 인스턴스 생성
         this.currentEnemy = new Monster(data);
+        console.log("Monster 생성 직후 객체 상태:", this.currentEnemy);
+        // [디버깅] 여기서 0/0이 나오는지 콘솔로 꼭 확인해보세요!
+        console.log(`몬스터 생성 완료: ${this.currentEnemy.name}, HP: ${this.currentEnemy.currentHp}/${this.currentEnemy.hp}`);
         
-        // 전투 준비 및 UI 갱신
+        // 5. 전투 환경 및 UI 초기화
         this.player.onEncounter();
         this.pProgress = 0;
         this.mProgress = 0;
+        
+        // UI 갱신
         this.ui.updatePotionUI(this.player.potionCount, true);
         this.ui.updatePlayer(this.player);
-        this.ui.updateMonster(this.currentEnemy); // 여기서 이제 img가 포함된 데이터가 전달됩니다!
+        this.ui.updateMonster(this.currentEnemy); 
         
         this.ui.log(`${this.enemyCount}번째 조우: Lv.${this.currentEnemy.level} ${this.currentEnemy.name}`, "sys");
         this.ui.updateDungeon("평원", this.enemyCount);

@@ -52,31 +52,33 @@ export const UI = {
     },
 
     updateMonster(monster) {
+        if (!monster) return;
+
+        // 1. 이름과 레벨 업데이트
+        const nameElem = document.getElementById('m-name');
+        const lvElem = document.getElementById('m-level');
+        if (nameElem) nameElem.innerText = monster.name;
+        if (lvElem) lvElem.innerText = monster.level;
+
+        // 2. 체력 텍스트 업데이트 (가장 의심되는 부분!)
+        // monster.currentHp와 monster.hp가 정확히 존재하는지 확인하며 넣습니다.
+        const hpTextElem = document.getElementById('m-hp-text');
+        if (hpTextElem) {
+            hpTextElem.innerText = `${monster.currentHp} / ${monster.hp}`;
+        }
+
+        // 3. 체력 바(Gauge) 업데이트
+        const hpBarElem = document.getElementById('m-hp-bar');
+        if (hpBarElem) {
+            const hpPercent = (monster.currentHp / monster.hp) * 100;
+            hpBarElem.style.width = `${Math.max(0, hpPercent)}%`;
+        }
+
+        // 4. 이미지 업데이트
         const iconBox = document.getElementById('m-icon');
-        
-        // 1. 데이터가 아예 안 들어온 경우 방어
-        if (!monster) {
-            console.error("UI Error: monster 객체가 없습니다.");
-            iconBox.innerHTML = '❓';
-            return;
+        if (iconBox && monster.img) {
+            iconBox.innerHTML = `<img src="${monster.img}" class="monster-sprite">`;
         }
-
-        // 2. [범인 검거] 이미지 경로를 변수에 따로 담습니다.
-        // monster.img가 있으면 쓰고, 없으면 빈 문자열을 줍니다.
-        const imagePath = monster.img || ""; 
-
-        if (imagePath !== "") {
-            // [주의] ${imagePath} 오타가 없는지, 백틱(`)으로 감쌌는지 꼭 확인하세요!
-            iconBox.innerHTML = `<img src="${imagePath}" alt="${monster.name}" class="monster-sprite">`;
-        } else {
-            // 이미지가 없을 때만 이모지를 띄웁니다.
-            iconBox.innerHTML = `<span style="font-size: 2rem;">👾</span>`;
-            console.warn(`${monster.name}의 이미지가 없습니다. (경로 비어있음)`);
-        }
-
-        // 3. 텍스트 업데이트
-        document.getElementById('m-name').innerText = monster.name || "Unknown";
-        document.getElementById('m-level').innerText = monster.level || "0";
     },
 
     showDamage(targetId, amount, isCrit) {
