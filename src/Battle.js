@@ -44,28 +44,47 @@ export class Battle {
 
     nextEnemy() {
         this.enemyCount++;
+        
+        // 10회 조우 시 정복 처리
         if (this.enemyCount > 10) {
             this.ui.log("🏆 던전을 완전히 정복했습니다!", "sys");
             return;
         }
 
-        // 몬스터 생성 로직
-        let data = this.dungeonData[Math.floor(Math.random() * this.dungeonData.length)];
+        // [중요] baseData를 먼저 정의해야 합니다!
+        // 현재 던전의 데이터 풀에서 무작위로 하나를 선택합니다.
+        const baseData = this.dungeonData[Math.floor(Math.random() * this.dungeonData.length)];
+        
+        let data; // 실제 생성에 사용될 최종 데이터 객체
+
         if (this.enemyCount === 10) {
-            data = { ...data, name: `${data.name} (BOSS)`, hp: data.hp * 4, atk: data.atk * 1.5, icon: "💀", level: this.player.level + 2 };
+            // 보스: 원본 데이터(...baseData)를 복사하고 능력치만 덮어쓰기
+            data = { 
+                ...baseData, 
+                name: `${baseData.name} (BOSS)`, 
+                hp: baseData.hp * 4, 
+                atk: baseData.atk * 1.5, 
+                level: this.player.level + 2 
+            };
         } else {
-            data = { ...data, level: Math.max(1, this.player.level + Math.floor(Math.random() * 3) - 1) };
+            // 일반: 원본 데이터(...baseData)를 복사하고 레벨만 조정
+            data = { 
+                ...baseData, 
+                level: Math.max(1, this.player.level + Math.floor(Math.random() * 3) - 1) 
+            };
         }
 
+        // 수정된 데이터를 바탕으로 몬스터 인스턴스 생성
         this.currentEnemy = new Monster(data);
         
-        // 전투 조우 시 리젠 회복 및 UI 갱신
+        // 전투 준비 및 UI 갱신
         this.player.onEncounter();
         this.pProgress = 0;
         this.mProgress = 0;
         this.ui.updatePotionUI(this.player.potionCount, true);
         this.ui.updatePlayer(this.player);
-        this.ui.updateMonster(this.currentEnemy);
+        this.ui.updateMonster(this.currentEnemy); // 여기서 이제 img가 포함된 데이터가 전달됩니다!
+        
         this.ui.log(`${this.enemyCount}번째 조우: Lv.${this.currentEnemy.level} ${this.currentEnemy.name}`, "sys");
         this.ui.updateDungeon("평원", this.enemyCount);
 
