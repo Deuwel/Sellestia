@@ -54,7 +54,7 @@ export class Battle {
         // [중요] baseData를 먼저 정의해야 합니다!
         // 현재 던전의 데이터 풀에서 무작위로 하나를 선택합니다.
         const baseData = this.dungeonData[Math.floor(Math.random() * this.dungeonData.length)];
-        
+        console.log("원본 데이터 img:", baseData.img);
         let data; // 실제 생성에 사용될 최종 데이터 객체
 
         if (this.enemyCount === 10) {
@@ -160,15 +160,29 @@ export class Battle {
 
         if (playerDied) {
             this.ui.log("💀 눈앞이 캄캄해졌습니다...", "sys");
-            // 경험치 페널티 로직 (현재 경험치의 2%)
-            const penalty = Math.floor(this.player.exp * 0.02);
-            this.player.exp -= penalty;
+            
+            // [경험치 NaN 방지] exp가 숫자인지 확인
+            const currentExp = this.player.exp || 0;
+            const penalty = Math.floor(currentExp * 0.02);
+            
+            this.player.exp = Math.max(0, currentExp - penalty);
             this.ui.log(`패널티로 경험치 ${penalty}를 잃었습니다.`, "sys");
-            // 마을로 돌아가는 로직은 나중에 구현
+            
+            this.ui.updatePlayer(this.player); // UI 갱신 필수
         } else {
-            this.ui.log(`✨ ${this.currentEnemy.name} 처치! EXP +${this.currentEnemy.exp}`, "sys");
-            this.player.gainExp(this.currentEnemy.exp);
-            setTimeout(() => this.nextEnemy(), 1500);
+            // [경험치 NaN 방지] 데이터에 exp가 없으면 레벨 * 10으로 임시 계산
+            const rewardExp = this.currentEnemy.exp || (this.currentEnemy.level * 10);
+            
+            this.ui.log(`✨ ${this.currentEnemy.name} 처치! EXP +${rewardExp}`, "sys");
+            
+            // gainExp 함수가 내부적으로 숫자를 처리하는지 확인 필요
+            this.player.gainExp(rewardExp); 
+            this.ui.updatePlayer(this.player); // 플레이어 UI 갱신
+
+            // 1.5초 뒤 다음 몬스터 소환
+            setTimeout(() => {
+                this.nextEnemy();
+            }, 1500);
         }
     }
 }

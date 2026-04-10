@@ -21,9 +21,14 @@ export const DUNGEON_POOL = {
     ]
 };
 
+// src/Monster.js
 export class Monster {
     constructor(data) {
+        // 기존 속성들을 복사
         Object.assign(this, data);
-        this.currentHp = this.hp; // 현재 체력 초기화
+        
+        // [중요] 데이터에 img가 있다면 명시적으로 할당, 없으면 빈 문자열
+        this.img = data.img || ""; 
+        this.currentHp = this.hp;
     }
 }

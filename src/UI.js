@@ -52,22 +52,31 @@ export const UI = {
     },
 
     updateMonster(monster) {
-        if (!monster) return;
         const iconBox = document.getElementById('m-icon');
-        if (monster && monster.img && monster.img !== "") {
-        iconBox.innerHTML = `<img src="${monster.img}" alt="${monster.name}" class="monster-sprite">`;
-        } else {
-        // 이미지가 없으면 'undefined' 대신 이모지나 빈 칸 출력
-        iconBox.innerHTML = `<span style="font-size: 2rem;">❓</span>`;
+        
+        // 1. 데이터가 아예 안 들어온 경우 방어
+        if (!monster) {
+            console.error("UI Error: monster 객체가 없습니다.");
+            iconBox.innerHTML = '❓';
+            return;
         }
 
-        
-        // 2. 텍스트 처리 (데이터가 없을 때를 대비해 Optional Chaining 사용)
-        document.getElementById('m-name').innerText = monster?.name || "찾는 중...";
-        document.getElementById('m-level').innerText = monster?.level || "1";
-        document.getElementById('m-icon').innerText = monster.icon;
-        document.getElementById('m-hp-bar').style.width = `${(monster.currentHp / monster.hp) * 100}%`;
-        document.getElementById('m-hp-text').innerText = `${Math.floor(monster.currentHp)} / ${monster.hp}`;
+        // 2. [범인 검거] 이미지 경로를 변수에 따로 담습니다.
+        // monster.img가 있으면 쓰고, 없으면 빈 문자열을 줍니다.
+        const imagePath = monster.img || ""; 
+
+        if (imagePath !== "") {
+            // [주의] ${imagePath} 오타가 없는지, 백틱(`)으로 감쌌는지 꼭 확인하세요!
+            iconBox.innerHTML = `<img src="${imagePath}" alt="${monster.name}" class="monster-sprite">`;
+        } else {
+            // 이미지가 없을 때만 이모지를 띄웁니다.
+            iconBox.innerHTML = `<span style="font-size: 2rem;">👾</span>`;
+            console.warn(`${monster.name}의 이미지가 없습니다. (경로 비어있음)`);
+        }
+
+        // 3. 텍스트 업데이트
+        document.getElementById('m-name').innerText = monster.name || "Unknown";
+        document.getElementById('m-level').innerText = monster.level || "0";
     },
 
     showDamage(targetId, amount, isCrit) {
