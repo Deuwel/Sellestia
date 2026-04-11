@@ -3,38 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <title>Sellestia - Town</title>
-    <link rel="stylesheet" href="town.css"> <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="town.css"> 
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
     <header class="status-bar">
         <div class="player-brief">
-            <span style="color:var(--primary-blue)">LV.</span> <span id="player-level">1</span>
-            <span style="margin-left:15px; color:var(--primary-blue)">HP</span> <span id="player-hp">100 / 100</span>
+            <span class="label-blue">LV.</span> <span id="player-level">1</span>
+            <span class="label-blue ml-15">HP</span> <span id="player-hp">100 / 100</span>
+            <span class="label-gold ml-15">GOLD</span> <span id="top-player-gold">0</span>
         </div>
-        <div style="font-weight:bold;">안식의 마을, 셀레스티아</div>
-        <div class="exp-brief"><span style="color:var(--primary-blue)">EXP</span> <span id="player-exp">0%</span></div>
+        <div class="location-title">안식의 마을, 셀레스티아</div>
+        <div class="exp-brief">
+            <span class="label-blue">EXP</span> <span id="player-exp">0%</span>
+        </div>
     </header>
 
     <div class="town-wrapper">
         <aside class="panel char-info-panel">
-            <div style="text-align:center; margin-bottom:20px;">
-                <div style="width:100px; height:100px; background:#252839; border:3px solid var(--primary-blue); border-radius:50%; margin:0 auto 10px;"></div>
-                <h2 style="margin:0;">Adventurer</h2>
-                <p style="font-size:0.9rem; color:#888;">초보 모험가 | Lv.<span id="ui-level">1</span></p>
+            <div class="profile-section">
+                <div class="profile-avatar"></div>
+                <h2>Adventurer</h2>
+                <p class="sub-text">초보 모험가 | Lv.<span id="ui-level">1</span></p>
+                <div class="gold-display-main">
+                    <span class="gold-icon">💰</span> 
+                    <span id="ui-gold">0</span> <span class="gold-unit">G</span>
+                </div>
             </div>
 
-            <div style="margin-bottom:20px;">
-                <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:5px;">
+            <div class="exp-container">
+                <div class="exp-label">
                     <span>Experience</span> <span id="ui-exp-text">0 / 20 (0%)</span>
                 </div>
-                <div style="width:100%; height:8px; background:#252839; border-radius:4px; overflow:hidden;">
-                    <div id="ui-exp-bar" style="width:0%; height:100%; background:var(--primary-blue);"></div>
+                <div class="exp-bar-bg">
+                    <div id="ui-exp-bar" class="exp-bar-fill"></div>
                 </div>
             </div>
 
-            <h3 style="font-size:0.9rem; color:var(--primary-blue); border-bottom:1px solid #333; padding-bottom:5px;">Detailed Stats</h3>
-            <div style="font-size: 0.85rem;">
+            <h3 class="panel-h3 blue">Detailed Stats</h3>
+            <div class="stats-list-container">
                 <div class="stat-row"><span>최대 체력 (HP)</span><span id="ui-max-hp">20</span></div>
                 <div class="stat-row"><span>공격력 (ATK)</span><span id="ui-atk">2</span></div>
                 <div class="stat-row"><span>방어력 (DEF)</span><span id="ui-def">0</span></div>
@@ -44,174 +52,166 @@
                 <div class="stat-row"><span>체력 재생 (REG)</span><span id="ui-hp-regen">1</span></div>
             </div>
 
-            <div style="margin-top: 20px;">
-                <h3 style="font-size:0.9rem; color:var(--accent-gold); border-bottom:1px solid #333; padding-bottom:5px; display:flex; justify-content:space-between;">
+            <div class="investment-section">
+                <h3 class="panel-h3 gold">
                     Base Stats <span>Point: <span id="ui-stat-points">0</span></span>
                 </h3>
                 
-                <div class="stat-row">
-                    <div class="tooltip">STR (근력) <span style="font-size:0.7rem; margin-left:5px; border:1px solid #555; padding:0 3px; cursor:help;">?</span>
+                <div class="stat-row invest-row">
+                    <div class="tooltip">STR (근력) <span class="help-mark">?</span>
                         <div class="tooltip-card">
-                            <strong style="color:var(--primary-blue)">STR (근력)</strong><hr style="border:0; border-top:1px solid #333; margin:8px 0;">
-                            <span style="font-size:0.85rem;">물리 공격의 위력을 결정합니다.<br>1 포인트당 공격력이 0.8 상승합니다.</span>
+                            <strong class="label-blue">STR (근력)</strong><hr>
+                            <span>물리 공격의 위력을 결정합니다.<br>1 포인트당 공격력이 0.8 상승합니다.</span>
                         </div>
                     </div>
-                    <div style="display:flex; align-items:center; gap:10px;">
-                        <button class="btn-circle" onclick="decreaseStat('str')">-</button>
-                        <span id="ui-base-str" style="font-weight:bold; min-width:20px; text-align:center;">1</span>
-                        <button class="btn-circle" onclick="increaseStat('str')">+</button>
+                    <div class="control-group">
+                        <button class="stat-btn btn-minus" onclick="decreaseStat('str')">−</button>
+                        <span id="ui-base-str" class="base-stat-val">1</span>
+                        <button class="stat-btn btn-plus" onclick="increaseStat('str')">+</button>
                     </div>
                 </div>
 
-                <div class="stat-row">
-                    <div class="tooltip">DEX (민첩) <span style="font-size:0.7rem; margin-left:5px; border:1px solid #555; padding:0 3px; cursor:help;">?</span>
+                <div class="stat-row invest-row">
+                    <div class="tooltip">DEX (민첩) <span class="help-mark">?</span>
                         <div class="tooltip-card">
-                            <strong style="color:var(--primary-blue)">DEX (민첩)</strong><hr style="border:0; border-top:1px solid #333; margin:8px 0;">
-                            <span style="font-size:0.85rem;">행동 우선권과 공격 속도에 영향을 줍니다.<br>1 포인트당 행동 속도가 5 상승합니다.</span>
+                            <strong class="label-blue">DEX (민첩)</strong><hr>
+                            <span>행동 속도에 영향을 줍니다.<br>1 포인트당 행동 속도가 5 상승합니다.</span>
                         </div>
                     </div>
-                    <div style="display:flex; align-items:center; gap:10px;">
-                        <button class="btn-circle" onclick="decreaseStat('dex')">-</button>
-                        <span id="ui-base-dex" style="font-weight:bold; min-width:20px; text-align:center;">1</span>
-                        <button class="btn-circle" onclick="increaseStat('dex')">+</button>
+                    <div class="control-group">
+                        <button class="stat-btn btn-minus" onclick="decreaseStat('dex')">−</button>
+                        <span id="ui-base-dex" class="base-stat-val">1</span>
+                        <button class="stat-btn btn-plus" onclick="increaseStat('dex')">+</button>
                     </div>
                 </div>
 
-                <div class="stat-row">
-                    <div class="tooltip">VIT (체력) <span style="font-size:0.7rem; margin-left:5px; border:1px solid #555; padding:0 3px; cursor:help;">?</span>
+                <div class="stat-row invest-row">
+                    <div class="tooltip">VIT (체력) <span class="help-mark">?</span>
                         <div class="tooltip-card">
-                            <strong style="color:var(--primary-blue)">VIT (체력)</strong><hr style="border:0; border-top:1px solid #333; margin:8px 0;">
-                            <span style="font-size:0.85rem;">생존력을 결정합니다.<br>1 포인트당 최대 HP가 5, HP 재생이 1 상승합니다.</span>
+                            <strong class="label-blue">VIT (체력)</strong><hr>
+                            <span>생존력을 결정합니다.<br>1 포인트당 최대 HP가 5 상승합니다.</span>
                         </div>
                     </div>
-                    <div style="display:flex; align-items:center; gap:10px;">
-                        <button class="btn-circle" onclick="decreaseStat('vit')">-</button>
-                        <span id="ui-base-vit" style="font-weight:bold; min-width:20px; text-align:center;">1</span>
-                        <button class="btn-circle" onclick="increaseStat('vit')">+</button>
+                    <div class="control-group">
+                        <button class="stat-btn btn-minus" onclick="decreaseStat('vit')">−</button>
+                        <span id="ui-base-vit" class="base-stat-val">1</span>
+                        <button class="stat-btn btn-plus" onclick="increaseStat('vit')">+</button>
                     </div>
                 </div>
 
-                <div class="stat-row">
-                    <div class="tooltip">END (지구력) <span style="font-size:0.7rem; margin-left:5px; border:1px solid #555; padding:0 3px; cursor:help;">?</span>
+                <div class="stat-row invest-row">
+                    <div class="tooltip">END (지구력) <span class="help-mark">?</span>
                         <div class="tooltip-card">
-                            <strong style="color:var(--primary-blue)">END (지구력)</strong><hr style="border:0; border-top:1px solid #333; margin:8px 0;">
-                            <span style="font-size:0.85rem;">피해를 경감합니다.<br>1 포인트당 방어력이 0.5 상승합니다.</span>
+                            <strong class="label-blue">END (지구력)</strong><hr>
+                            <span>방어력을 결정합니다.<br>1 포인트당 방어력이 0.5 상승합니다.</span>
                         </div>
                     </div>
-                    <div style="display:flex; align-items:center; gap:10px;">
-                        <button class="btn-circle" onclick="decreaseStat('end')">-</button>
-                        <span id="ui-base-end" style="font-weight:bold; min-width:20px; text-align:center;">1</span>
-                        <button class="btn-circle" onclick="increaseStat('end')">+</button>
+                    <div class="control-group">
+                        <button class="stat-btn btn-minus" onclick="decreaseStat('end')">−</button>
+                        <span id="ui-base-end" class="base-stat-val">1</span>
+                        <button class="stat-btn btn-plus" onclick="increaseStat('end')">+</button>
                     </div>
                 </div>
 
-                <div class="stat-row">
-                    <div class="tooltip">LUK (운) <span style="font-size:0.7rem; margin-left:5px; border:1px solid #555; padding:0 3px; cursor:help;">?</span>
+                <div class="stat-row invest-row">
+                    <div class="tooltip">LUK (운) <span class="help-mark">?</span>
                         <div class="tooltip-card">
-                            <strong style="color:var(--primary-blue)">LUK (운)</strong><hr style="border:0; border-top:1px solid #333; margin:8px 0;">
-                            <span style="font-size:0.85rem;">행운의 기회를 높입니다.<br>1 포인트당 치명타 확률이 1% 상승합니다.</span>
+                            <strong class="label-blue">LUK (운)</strong><hr>
+                            <span>치명타 확률에 영향을 줍니다.<br>1 포인트당 확률이 1% 상승합니다.</span>
                         </div>
                     </div>
-                    <div style="display:flex; align-items:center; gap:10px;">
-                        <button class="btn-circle" onclick="decreaseStat('luk')">-</button>
-                        <span id="ui-base-luk" style="font-weight:bold; min-width:20px; text-align:center;">1</span>
-                        <button class="btn-circle" onclick="increaseStat('luk')">+</button>
+                    <div class="control-group">
+                        <button class="stat-btn btn-minus" onclick="decreaseStat('luk')">−</button>
+                        <span id="ui-base-luk" class="base-stat-val">1</span>
+                        <button class="stat-btn btn-plus" onclick="increaseStat('luk')">+</button>
                     </div>
                 </div>
 
                 <button class="confirm-btn" onclick="confirmStats()">능력치 투자 결정</button>
             </div>
         </aside>
-        </aside>
 
         <main class="panel main-content-panel">
-            <h3 style="margin-top:0;">마을 시설</h3>
-            <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:15px;">
-                <div style="background:rgba(255,255,255,0.03); padding:20px; border-radius:10px; border:1px solid var(--panel-border); text-align:center; cursor:pointer;" onclick="location.href='battle.html'">
-                    <span style="font-size:2.5rem; display:block; margin-bottom:10px;">⚔️</span>
+            <h3 class="panel-h3">마을 시설</h3>
+            <div class="facility-grid">
+                <div class="facility-card" onclick="location.href='battle.html'">
+                    <span class="facility-icon">⚔️</span>
                     <strong>별무리 평원</strong>
                 </div>
-                </div>
+            </div>
         </main>
     </div>
-</div> <script type="module">
-        import { Player } from './src/Player.js'; // 파일 경로가 맞는지 확인하세요.
 
-        // 페이지 로드 시 실행
-        window.onload = () => {
-            initTown();
-        };
+    <script type="module">
+        import { Player } from './src/Player.js';
 
         let player;
+        let initialBaseStats = {};
+
+        window.onload = () => { initTown(); };
 
         function initTown() {
-            // 2. 기존 저장된 데이터가 있다면 불러오고, 없으면 새로 생성
             const savedData = localStorage.getItem('playerData');
             player = new Player();
             
             if (savedData) {
                 const parsed = JSON.parse(savedData);
-                // 저장된 데이터를 player 객체에 덮어씌우는 작업이 필요할 수 있습니다.
                 Object.assign(player, parsed);
             }
-
+            initialBaseStats = { ...player.baseStats };
             updateUI();
         }
 
-        // 3. UI 업데이트 함수 (데이터 -> 화면)
         window.updateUI = function() {
-            // 상단바 & 기본 정보
-            document.getElementById('ui-level').innerText = player.level;
+            if(!player) return;
             document.getElementById('player-level').innerText = player.level;
+            document.getElementById('player-hp').innerText = `${Math.floor(player.currentHp)} / ${player.maxHp}`;
+            document.getElementById('top-player-gold').innerText = (player.gold || 0).toLocaleString();
+            document.getElementById('ui-level').innerText = player.level;
             document.getElementById('ui-stat-points').innerText = player.statPoints;
+            document.getElementById('ui-gold').innerText = (player.gold || 0).toLocaleString();
 
-            // 상세 스탯 (player.js의 계산 공식 반영)
             player.updateDerivedStats(); 
             document.getElementById('ui-max-hp').innerText = player.maxHp;
-            document.getElementById('ui-atk').innerText = player.atk;
-            document.getElementById('ui-def').innerText = player.def;
+            document.getElementById('ui-atk').innerText = player.atk.toFixed(1);
+            document.getElementById('ui-def').innerText = player.def.toFixed(1);
             document.getElementById('ui-speed').innerText = player.speed;
             document.getElementById('ui-crit-chance').innerText = player.critChance + "%";
             document.getElementById('ui-hp-regen').innerText = player.hpRegen;
 
-            // 투자 스탯 숫자
             document.getElementById('ui-base-str').innerText = player.baseStats.str;
             document.getElementById('ui-base-dex').innerText = player.baseStats.dex;
             document.getElementById('ui-base-vit').innerText = player.baseStats.vit;
             document.getElementById('ui-base-end').innerText = player.baseStats.end;
             document.getElementById('ui-base-luk').innerText = player.baseStats.luk;
 
-            // 경험치 바
-            const expPercent = (player.exp / player.maxExp) * 100;
+            const expPercent = Math.floor((player.exp / player.maxExp) * 100);
+            document.getElementById('player-exp').innerText = expPercent + "%";
             document.getElementById('ui-exp-bar').style.width = expPercent + "%";
             document.getElementById('ui-exp-text').innerText = `${player.exp} / ${player.maxExp} (${expPercent}%)`;
         }
 
-        // 4. 스탯 조정 함수들 (window 객체에 할당해야 HTML 버튼에서 인식함)
         window.increaseStat = function(statName) {
             if (player.statPoints > 0) {
                 player.baseStats[statName]++;
                 player.statPoints--;
                 updateUI();
-            } else {
-                alert("남은 스탯 포인트가 없습니다!");
             }
         }
 
         window.decreaseStat = function(statName) {
-            // 기본값 1보다 낮아지지 않게 설정
-            if (player.baseStats[statName] > 1) {
+            if (player.baseStats[statName] > (initialBaseStats[statName] || 0)) {
                 player.baseStats[statName]--;
                 player.statPoints++;
                 updateUI();
             }
         }
 
-        // 5. 결정 버튼 - 로컬 스토리지에 최종 저장
         window.confirmStats = function() {
             player.updateDerivedStats();
             localStorage.setItem('playerData', JSON.stringify(player));
-            alert("능력치가 저장되었습니다!");
+            initialBaseStats = { ...player.baseStats };
+            alert("능력치가 성공적으로 저장되었습니다!");
             updateUI();
         }
     </script>

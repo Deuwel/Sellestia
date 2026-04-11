@@ -1,10 +1,12 @@
-/* town.css - 레이아웃 뼈대 */
+/* --- 전역 설정 및 변수 --- */
 :root {
     --bg-dark: #0b0c14;
     --panel-bg: #161824;
     --panel-border: #2a2d3e;
     --primary-blue: #a0c4ff;
     --accent-gold: #ffd700;
+    --btn-green: #4cae4c;
+    --btn-red: #d9534f;
 }
 
 body, html {
@@ -13,10 +15,10 @@ body, html {
     background-color: var(--bg-dark);
     color: #e0e0e0;
     font-family: 'Noto Sans KR', sans-serif;
-    overflow: hidden; /* 전체 스크롤 차단 */
+    overflow: hidden; /* 전체 스크롤 방지 */
 }
 
-/* 상단바 고정 */
+/* --- 상단바 레이아웃 --- */
 .status-bar {
     height: 60px;
     background: rgba(22, 24, 36, 0.95);
@@ -25,58 +27,115 @@ body, html {
     padding: 0 30px; box-sizing: border-box;
 }
 
-/* 메인 그리드 레이아웃 (가장 중요) */
+.label-blue { color: var(--primary-blue); font-weight: bold; }
+.label-gold { color: var(--accent-gold); font-weight: bold; }
+.ml-15 { margin-left: 15px; }
+
+/* --- 메인 그리드 레이아웃 --- */
 .town-wrapper {
     display: grid;
-    grid-template-columns: 420px 1fr; /* 좌측 420px 고정, 우측 나머지 */
+    grid-template-columns: 420px 1fr; /* 좌측 고정, 우측 확장 */
     gap: 20px;
     padding: 20px;
-    height: calc(100vh - 60px); /* 화면 꽉 채우기 */
+    height: calc(100vh - 60px); 
     box-sizing: border-box;
 }
 
-/* 패널 공통 스타일 */
 .panel {
     background: var(--panel-bg);
     border: 1px solid var(--panel-border);
     border-radius: 12px;
     padding: 25px;
     box-sizing: border-box;
-    overflow-y: auto; /* 패널 내부에서만 스크롤 */
+    overflow-y: auto; /* 패널 내부 스크롤 */
+    height: 100%;
 }
 
-/* 스탯 줄 스타일 */
+/* --- 프로필 및 골드 UI --- */
+.profile-section { text-align: center; margin-bottom: 20px; }
+.profile-avatar {
+    width: 100px; height: 100px;
+    background: #252839;
+    border: 3px solid var(--primary-blue);
+    border-radius: 50%;
+    margin: 0 auto 10px;
+}
+.sub-text { font-size: 0.9rem; color: #888; margin: 5px 0; }
+
+.gold-display-main {
+    margin: 12px auto;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 6px 15px;
+    border-radius: 20px;
+    display: inline-flex; align-items: center;
+    border: 1px solid var(--accent-gold);
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.1);
+}
+.gold-icon { margin-right: 8px; }
+#ui-gold { color: var(--accent-gold); font-weight: bold; font-size: 1.1rem; }
+.gold-unit { font-size: 0.8rem; color: #aaa; margin-left: 3px; }
+
+/* --- 경험치 바 --- */
+.exp-container { margin-bottom: 20px; }
+.exp-label { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 6px; }
+.exp-bar-bg { width: 100%; height: 8px; background: #252839; border-radius: 4px; overflow: hidden; }
+.exp-bar-fill { height: 100%; background: var(--primary-blue); transition: width 0.3s ease; }
+
+/* --- 스탯 정보 및 투자 --- */
+.panel-h3 { margin: 20px 0 10px; font-size: 1.1rem; border-bottom: 1px solid var(--panel-border); padding-bottom: 5px; }
+.panel-h3.blue { color: var(--primary-blue); }
+.panel-h3.gold { color: var(--accent-gold); display: flex; justify-content: space-between; }
+
 .stat-row {
     display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 12px; padding: 8px 0;
+    padding: 6px 0;
     border-bottom: 1px solid rgba(255,255,255,0.03);
+    font-size: 0.85rem;
 }
 
-/* 툴팁 절대 좌표 설정 */
-.tooltip { position: relative; display: inline-flex; align-items: center; }
+.invest-row { padding: 8px 0; font-size: 0.95rem; }
+
+/* --- 투자 버튼 (+, -) --- */
+.control-group { display: flex; align-items: center; gap: 12px; }
+.stat-btn {
+    width: 26px; height: 26px; border: none; border-radius: 4px;
+    color: white; font-weight: bold; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: 0.2s; box-shadow: 0 2px 0 rgba(0,0,0,0.3);
+}
+.btn-plus { background: linear-gradient(180deg, #5cb85c 0%, var(--btn-green) 100%); }
+.btn-minus { background: linear-gradient(180deg, #ec6e6a 0%, var(--btn-red) 100%); }
+.stat-btn:active { transform: translateY(1px); box-shadow: none; }
+.base-stat-val { min-width: 25px; text-align: center; font-weight: bold; }
+
+.confirm-btn {
+    width: 100%; margin-top: 25px; padding: 12px;
+    background: linear-gradient(180deg, #2a2d3e 0%, #1c1f2e 100%);
+    border: 1px solid var(--accent-gold); border-radius: 8px;
+    color: var(--accent-gold); font-weight: bold; cursor: pointer; transition: 0.3s;
+}
+.confirm-btn:hover { background: var(--accent-gold); color: #000; }
+
+/* --- 툴팁 --- */
+.tooltip { position: relative; cursor: help; }
+.help-mark { font-size: 0.7rem; border: 1px solid #555; padding: 0 4px; border-radius: 3px; color: #888; }
 .tooltip-card {
-    visibility: hidden;
-    position: absolute;
-    z-index: 100;
-    bottom: 110%; /* 아이콘 위쪽 */
-    left: 0;      /* 왼쪽 정렬로 변경 (중앙 정렬X) */
-    width: 280px; 
-    background: #1c1f2e;
-    border: 1px solid var(--primary-blue);
-    padding: 15px;
-    border-radius: 8px;
-    opacity: 0;
-    transition: 0.3s;
-    pointer-events: none;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    visibility: hidden; position: absolute; z-index: 100;
+    bottom: 120%; left: 0; width: 250px;
+    background: #1c1f2e; border: 1px solid var(--primary-blue);
+    padding: 12px; border-radius: 8px; opacity: 0; transition: 0.3s; pointer-events: none;
 }
-.tooltip:hover .tooltip-card {
-    visibility: visible;
-    opacity: 1;
-}
+.tooltip:hover .tooltip-card { visibility: visible; opacity: 1; }
 
-/* 스탯 포인트 강조 */
-#ui-stat-points {
-    color: var(--accent-gold);
-    font-weight: bold;
+/* --- 마을 시설 그리드 --- */
+.facility-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px; margin-top: 15px;
 }
+.facility-card {
+    background: rgba(255,255,255,0.03); padding: 25px; border-radius: 12px;
+    border: 1px solid var(--panel-border); text-align: center; transition: 0.3s; cursor: pointer;
+}
+.facility-card:hover { border-color: var(--primary-blue); transform: translateY(-3px); background: rgba(160, 196, 255, 0.05); }
+.facility-icon { font-size: 2.5rem; display: block; margin-bottom: 10px; }
