@@ -212,8 +212,25 @@ export class Battle {
 
             // 3. 버그 수정 핵심: 1.5초 뒤 '완전한 상태 초기화' 후 다음 적 소환
             setTimeout(() => {
-                this.startNextBattle(); // nextEnemy를 포함한 통합 시작 함수 호출
+                this.prepareNextBattle();// nextEnemy를 포함한 통합 시작 함수 호출
             }, 1500);
         }
+    }
+
+    prepareNextBattle() {
+        // 3. 내부 타이머 논리값 0으로 리셋
+        this.timer = 0; 
+        
+        // 4. 다음 적 데이터 세팅
+        this.nextEnemy(); 
+        
+        // 5. UI 갱신 (이미지, 이름, 그리고 타이머 바 0%로)
+        this.ui.updateMonster(this.currentEnemy); 
+        this.ui.updateTimerBar(0); // UI에도 0임을 전달
+        
+        this.ui.log(`⚔️ ${this.currentEnemy.name}이(가) 나타났다!`, "sys");
+
+        // 6. 전투 루프 재시작
+        this.startBattle(); 
     }
 }
