@@ -47,17 +47,33 @@ export class Player {
     }
 
     gainExp(amount) {
-    const validAmount = Number(amount) || 0; // 숫자가 아니면 0으로 처리
-    this.exp = (Number(this.exp) || 0) + validAmount;
-        if (this.exp >= this.maxExp) this.levelUp();
+        const validAmount = Number(amount) || 0;
+        this.exp = (Number(this.exp) || 0) + validAmount;
+
+        // [수정] if 대신 while을 사용하여, 남은 경험치가 maxExp보다 적어질 때까지 반복합니다.
+        // 예: 레벨업 후에도 경험치가 남으면 즉시 다음 레벨업을 진행합니다.
+        while (this.exp >= this.maxExp) {
+            this.levelUp();
+        }
     }
 
     levelUp() {
         this.level++;
+        
+        // 1. 경험치 차감 (남은 경험치는 유지됨)
         this.exp -= this.maxExp;
+        
+        // 2. 다음 레벨업 요구량 증가 (기존 1.5배 로직 유지)
         this.maxExp = Math.floor(this.maxExp * 1.5);
+        
+        // 3. 스탯 포인트 지급 및 회복
         this.statPoints += 4;
-        this.updateDerivedStats();
-        this.hp = this.maxHp;
+        this.updateDerivedStats(); // 포인트로 올린 스탯 반영 로직인 것 같네요!
+        this.hp = this.maxHp;      // 풀피 회복
+        
+        // [추가 추천] 레벨업 로그를 UI에 남겨주면 유저가 더 좋아합니다.
+        if (this.ui) {
+            this.ui.log(`🎊 LEVEL UP! 현재 레벨: ${this.level}`, 'sys');
+        }
     }
 }

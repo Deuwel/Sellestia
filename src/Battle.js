@@ -115,6 +115,12 @@ export class Battle {
     }
 
     attack(attacker, defender, targetCardId) {
+        // 1. [중요] 생존 확인: 공격자나 방어자 중 하나라도 체력이 0이면 즉시 중단
+        // 이를 통해 사망 후 setTimeout 대기 시간 동안 발생하는 추가 공격을 막습니다.
+        const attackerHp = attacker.currentHp !== undefined ? attacker.currentHp : attacker.hp;
+        const defenderHp = defender.currentHp !== undefined ? defender.currentHp : defender.hp;
+        if (attackerHp <= 0 || defenderHp <= 0) return;
+
         let isCrit = false;
         let dmg = attacker.atk - (defender.def || 0);
         
@@ -126,60 +132,64 @@ export class Battle {
         
         dmg = Math.max(1, dmg);
         
-        // 1. 데미지 적용 및 음수 방지 처리
+        // 데미지 적용
         if (defender.currentHp !== undefined) {
-            defender.currentHp -= dmg;
-            // 체력이 0 미만으로 내려가지 않도록 고정
-            defender.currentHp = Math.max(0, defender.currentHp);
+            defender.currentHp = Math.max(0, defender.currentHp - dmg);
         } else {
-            defender.hp -= dmg;
-            // 몬스터 등 일반 객체도 0 미만 방지
-            defender.hp = Math.max(0, defender.hp);
+            defender.hp = Math.max(0, defender.hp - dmg);
         }
 
-        // 2. UI 효과 연출
+        // UI 효과 및 로그 연출
         this.ui.showDamage(targetCardId, dmg, isCrit);
         const type = attacker.name === "Adventurer" ? 'p' : 'm';
         this.ui.log(`${attacker.name}: ${dmg} 데미지! ${isCrit ? '💥' : ''}`, type);
         
-        // 3. UI 갱신 (이미 내부 데이터가 0 이상이므로 UI도 0으로 정상 표기됨)
         this.ui.updatePlayer(this.player);
         this.ui.updateMonster(this.currentEnemy);
 
-        // 4. 사망 판정 (깔끔하게 0 이하인지 확인)
-        if (defender.currentHp <= 0) {
+        // 2. 사망 판정
+        const currentDefenderHp = (defender.currentHp !== undefined) ? defender.currentHp : defender.hp;
+        if (currentDefenderHp <= 0) {
             this.endLoop(defender === this.player);
         }
     }
 
     endLoop(playerDied) {
-        clearInterval(this.battleTimer);
-        this.ui.logBreak(); // 로그 구분선
+        // 1. [중요] 타이머 즉시 정지 및 참조 제거
+        if (this.battleTimer) {
+            clearInterval(this.battleTimer);
+            this.battleTimer = null; 
+        }
+
+        this.ui.logBreak();
 
         if (playerDied) {
             this.ui.log("💀 눈앞이 캄캄해졌습니다...", "sys");
             
-            // [경험치 NaN 방지] exp가 숫자인지 확인
-            const currentExp = this.player.exp || 0;
+            // 패널티 계산
+            const currentExp = Number(this.player.exp) || 0;
             const penalty = Math.floor(currentExp * 0.02);
-            
             this.player.exp = Math.max(0, currentExp - penalty);
-            this.ui.log(`패널티로 경험치 ${penalty}를 잃었습니다.`, "sys");
             
-            this.ui.updatePlayer(this.player); // UI 갱신 필수
+            this.ui.log(`패널티로 경험치 ${penalty}를 잃었습니다.`, "sys");
+            this.ui.updatePlayer(this.player);
+
+            // 캐릭터가 죽었을 때는 nextEnemy를 호출하지 않고 여기서 로직을 종료합니다.
         } else {
-            // [경험치 NaN 방지] 데이터에 exp가 없으면 레벨 * 10으로 임시 계산
-            const rewardExp = this.currentEnemy.exp || (this.currentEnemy.level * 10);
+            // 2. [중요] 고정 경험치 사용: 레벨 비례 수식 제거
+            // Monster.js 생성자에서 이미 Number로 처리되었으므로 그대로 사용합니다.
+            const rewardExp = this.currentEnemy.exp || 0;
             
             this.ui.log(`✨ ${this.currentEnemy.name} 처치! EXP +${rewardExp}`, "sys");
             
-            // gainExp 함수가 내부적으로 숫자를 처리하는지 확인 필요
             this.player.gainExp(rewardExp); 
-            this.ui.updatePlayer(this.player); // 플레이어 UI 갱신
+            this.ui.updatePlayer(this.player);
 
-            // 1.5초 뒤 다음 몬스터 소환
+            // 1.5초 뒤 다음 몬스터 소환 (플레이어가 살아있을 때만)
             setTimeout(() => {
-                this.nextEnemy();
+                if (this.player.currentHp > 0) {
+                    this.nextEnemy();
+                }
             }, 1500);
         }
     }

@@ -7,6 +7,7 @@ export const DUNGEON_POOL = {
             atk: 2, 
             def: 0, 
             speed: 82, 
+            exp:1,
             img: "assets/monsters/slime.png"  // 경로 입력
         },
         { 
@@ -16,6 +17,7 @@ export const DUNGEON_POOL = {
             atk: 3, 
             def: 1, 
             speed: 98, 
+            exp:2,
             img: "assets/monsters/wild_dog.png" 
         }
     ]
@@ -33,6 +35,6 @@ export class Monster {
         this.atk = Number(data.atk) || 2;
         this.def = Number(data.def) || 0;
         this.speed = Number(data.speed) || 100;
-        this.exp = Number(data.exp) || (this.level * 10);
+        this.exp = Number(data.exp) || 0;
     }
 }

@@ -16,3 +16,4 @@ document.addEventListener('DOMContentLoaded', () => {
         battle.startDungeon();
     }, 2000);
 });
+
