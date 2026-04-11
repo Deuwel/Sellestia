@@ -164,7 +164,10 @@ export class Battle {
             this.ui.updatePlayer(this.player);
         } else {
             const rewardExp = this.currentEnemy.exp || (this.currentEnemy.level * 10);
-            this.ui.log(`✨ ${this.currentEnemy.name} 처치! EXP +${rewardExp}`, "sys");
+            const rewardGold = this.currentEnemy.gold || 0;
+
+            this.ui.log(`✨ ${this.currentEnemy.name} 처치! EXP +${rewardExp}, GOLD+${rewardGold}`, "sys");
+            this.player.gold = (this.player.gold || 0) + rewardGold;
             
             this.player.gainExp(rewardExp); 
             this.ui.updatePlayer(this.player); 

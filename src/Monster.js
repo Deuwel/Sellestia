@@ -7,7 +7,8 @@ export const DUNGEON_POOL = {
             atk: 2, 
             def: 0, 
             speed: 82, 
-            exp:1,
+            exp:2,
+            gold:1,
             img: "assets/monsters/slime.png"  // 경로 입력
         },
         { 
@@ -17,7 +18,8 @@ export const DUNGEON_POOL = {
             atk: 3, 
             def: 1, 
             speed: 98, 
-            exp:2,
+            exp:3,
+            gold:2,
             img: "assets/monsters/wild_dog.png" 
         }
     ]
