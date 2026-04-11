@@ -3,106 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sellestia - Roguelike RPG</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Sellestia - Welcome</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nabla&family=Noto+Sans+KR:wght@300;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #030307;
+            --primary-color: #a0c4ff;
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
+            background-color: var(--bg-color);
+            font-family: 'Noto Sans KR', sans-serif;
+            overflow: hidden;
+        }
+
+        #title-screen {
+            width: 100%; height: 100%;
+            position: relative;
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        #star-trails-canvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 1;
+        }
+
+        .content {
+            position: relative; z-index: 2;
+            text-align: center;
+            display: flex; flex-direction: column;
+            justify-content: space-between;
+            height: 70vh;
+        }
+
+        .main-title {
+            font-family: 'Nabla', cursive;
+            font-size: 6rem; margin: 0;
+            letter-spacing: 8px;
+            background: linear-gradient(180deg, #fff 0%, var(--primary-color) 60%, #444 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 15px rgba(160, 196, 255, 0.6));
+        }
+
+        .sub-title {
+            font-size: 1.2rem; font-weight: 300;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: -10px; letter-spacing: 3px;
+        }
+
+        #start-link {
+            text-decoration: none;
+            font-size: 3.5rem; font-weight: 700;
+            color: #fff; text-transform: uppercase;
+            letter-spacing: 5px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        #start-link:hover {
+            transform: scale(1.15);
+            text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 40px var(--primary-color), 0 0 70px var(--primary-color);
+        }
+
+        .action-area { margin-bottom: 5vh; }
+    </style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="logo">🌌 SELLESTIA</div>
-        <div class="nav-menu">
-            <span class="nav-btn">마을</span>
-            <span class="nav-btn">던전</span>
-            <span class="nav-btn">설정</span>
+
+    <div id="title-screen">
+        <canvas id="star-trails-canvas"></canvas>
+        <div class="content">
+            <header>
+                <h1 class="main-title">Sellestia</h1>
+                <p class="sub-title">by Deuwel</p>
+            </header>
+            <div class="action-area">
+                <a href="town.html" id="start-link">Start</a>
+            </div>
         </div>
-        <div class="gold-display">💰 <span id="gold-amount">0</span></div>
-    </nav>
-
-    <div class="main-container">
-        
-        <aside class="sidebar">
-            <h3>Character</h3>
-            <div class="character-info-card">
-                <div class="info-header" style="margin-bottom: 10px;">
-                    <strong style="font-size: 1.1rem;">Lv.<span id="p-side-level">1</span> Adventurer</strong>
-                </div>
-                <div class="bar-bg exp" style="height: 14px; margin-bottom: 12px;">
-                <div id="p-exp-bar" class="fill"></div>
-                <span id="p-exp-percent" style="line-height: 14px; font-size: 10px;">0%</span>
-                </div>
-                <div id="p-exp-text" class="exp-detail">EXP: 0 / 0</div>
-                <div id="p-stats-list">
-                    </div>
-            </div>
-            
-            <div class="character-info-card" style="margin-top: 10px;">
-                <div class="stat-row">🧪 포션 보유량: <strong id="p-potion-count">5</strong></div>
-            </div>
-        </aside>
-        
-        
-        <main class="battle-field">
-            <div class="dungeon-info">
-                <h2 class="dungeon-name" id="dungeon-title">평원</h2>
-                <div class="wave-count">WAVE <span id="current-wave">1</span> / 10</div>
-            </div>
-
-            <div class="battle-main-zone">
-                <div class="arena">
-                    <div class="character-card" id="player-card">
-                        <div class="image-box">👤</div>
-                        <div class="info" style="margin-bottom: 10px;">
-                            <span style="color: #a29bfe; font-weight: bold;">Lv.<span id="p-level">1</span></span>
-                            <strong id="p-name">Adventurer</strong>
-                        </div>
-                        <div class="bar-bg hp">
-                            <div id="p-hp-bar" class="fill"></div>
-                            <span id="p-hp-text">0 / 0</span>
-                        </div>
-                        <div class="bar-bg sp-bar" style="height: 8px;">
-                            <div id="p-sp-bar" class="fill"></div>
-                        </div>
-                    </div>
-
-                    <div class="vs">VS</div>
-
-                    <div class="character-card" id="monster-card">
-                        <div class="image-box" id="m-icon">❓</div>
-                        <div class="info" style="margin-bottom: 10px;">
-                            <span style="color: #ff7675; font-weight: bold;">Lv.<span id="m-level">1</span></span>
-                            <strong id="m-name">-</strong>
-                        </div>
-                        <div class="bar-bg hp">
-                            <div id="m-hp-bar" class="fill"></div>
-                            <span id="m-hp-text">0 / 0</span>
-                        </div>
-                        <div class="bar-bg sp-bar" style="height: 8px;">
-                            <div id="m-sp-bar" class="fill"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="action-bar">
-                    <button id="btn-potion" class="action-btn">
-                        <div class="btn-icon">🧪</div> 
-                        <div class="btn-label">포션</div>
-                        <div class="btn-count-text">잔여 : <span id="potion-qty" class="btn-count-num">2</span></div>
-                    </button>
-
-                    <button class="action-btn locked" disabled>
-                        <div class="btn-icon">🔒</div>
-                        <div class="btn-label">잠김</div>
-                        <div class="btn-count-text">Lv.5 해금</div>
-                    </button>
-                </div>
-            </div>
-
-            <section class="log-container">
-                <div class="log-header">BATTLE LOG</div>
-                <div id="battle-log" class="log-content"></div>
-            </section>
-        </main>
     </div>
 
-    <script type="module" src="main.js"></script>
+    <script>
+        const canvas = document.getElementById('star-trails-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            initStars();
+        }
+        window.addEventListener('resize', resize);
+
+        let stars = [];
+        let centerX, centerY;
+
+        function initStars() {
+            stars = [];
+            // [중요] 중심점을 좌하단 바깥쪽으로 설정
+            centerX = -canvas.width * 0.2; 
+            centerY = canvas.height * 1.2;
+            
+            const numStars = 400;
+
+            for (let i = 0; i < numStars; i++) {
+                // 반지름을 다양하게 설정하여 화면 전체에 궤적이 생기게 함
+                const radius = Math.random() * (canvas.width + canvas.height);
+                
+                stars.push({
+                    radius: radius,
+                    // [핵심] 4사분면 방향(-90도 ~ 0도 사이)에서 시작하도록 설정
+                    angle: Math.random() * (Math.PI * 0.5) - (Math.PI * 0.5),
+                    speed: 0.00005 + (Math.random() * 0.0001),
+                    size: Math.random() * 1.5,
+                    color: `rgba(230, 240, 255, ${Math.random() * 0.7 + 0.3})`
+                });
+            }
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // 잔상 농도를 0.03으로 살짝 올려서 궤적이 안 끊기게 함
+            ctx.fillStyle = 'rgba(3, 3, 7, 0.03)'; 
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            stars.forEach(star => {
+                const x = centerX + Math.cos(star.angle) * star.radius;
+                const y = centerY + Math.sin(star.angle) * star.radius;
+
+                // 캔버스 범위 내에서만 그리기
+                if (x > -50 && x < canvas.width + 50 && y > -50 && y < canvas.height + 50) {
+                    ctx.beginPath();
+                    ctx.arc(x, y, star.size, 0, Math.PI * 2);
+                    ctx.fillStyle = star.color;
+                    ctx.fill();
+                }
+
+                // [핵심] 시계 방향(+=)으로 회전시켜야 좌하단 중심에서 '우하단 방향'으로 쏟아짐
+                star.angle += star.speed;
+
+                // 각도가 너무 커지면(화면 밖으로 나가면) 다시 시작점으로 리셋
+                if (star.angle > 0) {
+                    star.angle = -Math.PI * 0.5 - (Math.random() * 0.2);
+                }
+            });
+        }
+
+        resize();
+        animate();
+    </script>
 </body>
 </html>
