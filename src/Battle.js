@@ -56,15 +56,12 @@ export class Battle {
         // 2. 최종 데이터 객체 생성 (기본 능력치 보장)
         let data = { ...baseData }; 
 
-        // 3. 상황별 능력치 조정 (보스 vs 일반)
         if (this.enemyCount === 10) {
             data.name = `${baseData.name} (BOSS)`;
-            data.level = this.player.level + 2;
-            data.hp = Math.floor(baseData.hp * 4);
-            data.atk = Math.floor(baseData.atk * 1.5);
         } else {
-            data.level = Math.max(1, this.player.level + Math.floor(Math.random() * 3) - 1);
-            // 일반 몬스터는 기본 hp를 명시적으로 재할당하여 손실 방지
+            data.level = Math.floor(baseData.level)
+            data.hp = Math.floor(baseData.hp);
+            data.atk = Math.floor(baseData.atk);
             data.hp = baseData.hp; 
         }
 
