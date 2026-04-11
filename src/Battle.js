@@ -150,43 +150,62 @@ export class Battle {
             this.endLoop(defender === this.player);
         }
     }
+    startNextBattle() {
+        // 1. 적 데이터 생성 (기존 로직 사용)
+        this.nextEnemy(); 
+        
+        // 2. UI 갱신
+        this.ui.updateMonster(this.currentEnemy);
+        this.ui.log(`⚔️ ${this.currentEnemy.name}이(가) 나타났다!`, "sys");
 
+        // 3. 전투 타이머 재시작 (이 부분이 없으면 멈춤)
+        this.startBattleLoop(); 
+    }
+
+    startBattleLoop() {
+        // 혹시 모를 중복 실행 방지
+        if (this.battleTimer) clearInterval(this.battleTimer);
+
+        this.battleTimer = setInterval(() => {
+            // 전투 로직 (공격 순서 판단 등)
+            this.battleTick(); 
+        }, 1000); // 1초마다 턴 진행
+    }
+    
     endLoop(playerDied) {
-        // 1. [중요] 타이머 즉시 정지 및 참조 제거
+        // 1. 현재 진행 중인 타이머는 확실히 정지
         if (this.battleTimer) {
             clearInterval(this.battleTimer);
-            this.battleTimer = null; 
+            this.battleTimer = null; // 참조 초기화
         }
 
-        this.ui.logBreak();
+        this.ui.logBreak(); 
 
         if (playerDied) {
             this.ui.log("💀 눈앞이 캄캄해졌습니다...", "sys");
             
-            // 패널티 계산
-            const currentExp = Number(this.player.exp) || 0;
+            const currentExp = this.player.exp || 0;
             const penalty = Math.floor(currentExp * 0.02);
-            this.player.exp = Math.max(0, currentExp - penalty);
             
+            this.player.exp = Math.max(0, currentExp - penalty);
             this.ui.log(`패널티로 경험치 ${penalty}를 잃었습니다.`, "sys");
+            
             this.ui.updatePlayer(this.player);
+            // 플레이어 사망 시에는 여기서 루프가 종료됩니다. (재시작 버튼 등 필요)
 
-            // 캐릭터가 죽었을 때는 nextEnemy를 호출하지 않고 여기서 로직을 종료합니다.
         } else {
-            // 2. [중요] 고정 경험치 사용: 레벨 비례 수식 제거
-            // Monster.js 생성자에서 이미 Number로 처리되었으므로 그대로 사용합니다.
+            // 2. 적 사망 시 보상 처리
+            // 임의의 공식 대신 적 데이터의 exp를 우선 사용
             const rewardExp = this.currentEnemy.exp || 0;
             
             this.ui.log(`✨ ${this.currentEnemy.name} 처치! EXP +${rewardExp}`, "sys");
             
             this.player.gainExp(rewardExp); 
-            this.ui.updatePlayer(this.player);
+            this.ui.updatePlayer(this.player); 
 
-            // 1.5초 뒤 다음 몬스터 소환 (플레이어가 살아있을 때만)
+            // 3. 버그 수정 핵심: 1.5초 뒤 '완전한 상태 초기화' 후 다음 적 소환
             setTimeout(() => {
-                if (this.player.currentHp > 0) {
-                    this.nextEnemy();
-                }
+                this.startNextBattle(); // nextEnemy를 포함한 통합 시작 함수 호출
             }, 1500);
         }
     }
