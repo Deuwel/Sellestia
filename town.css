@@ -1,0 +1,82 @@
+/* town.css - 레이아웃 뼈대 */
+:root {
+    --bg-dark: #0b0c14;
+    --panel-bg: #161824;
+    --panel-border: #2a2d3e;
+    --primary-blue: #a0c4ff;
+    --accent-gold: #ffd700;
+}
+
+body, html {
+    margin: 0; padding: 0;
+    width: 100%; height: 100vh;
+    background-color: var(--bg-dark);
+    color: #e0e0e0;
+    font-family: 'Noto Sans KR', sans-serif;
+    overflow: hidden; /* 전체 스크롤 차단 */
+}
+
+/* 상단바 고정 */
+.status-bar {
+    height: 60px;
+    background: rgba(22, 24, 36, 0.95);
+    border-bottom: 2px solid var(--panel-border);
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0 30px; box-sizing: border-box;
+}
+
+/* 메인 그리드 레이아웃 (가장 중요) */
+.town-wrapper {
+    display: grid;
+    grid-template-columns: 420px 1fr; /* 좌측 420px 고정, 우측 나머지 */
+    gap: 20px;
+    padding: 20px;
+    height: calc(100vh - 60px); /* 화면 꽉 채우기 */
+    box-sizing: border-box;
+}
+
+/* 패널 공통 스타일 */
+.panel {
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: 12px;
+    padding: 25px;
+    box-sizing: border-box;
+    overflow-y: auto; /* 패널 내부에서만 스크롤 */
+}
+
+/* 스탯 줄 스타일 */
+.stat-row {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 12px; padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+}
+
+/* 툴팁 절대 좌표 설정 */
+.tooltip { position: relative; display: inline-flex; align-items: center; }
+.tooltip-card {
+    visibility: hidden;
+    position: absolute;
+    z-index: 100;
+    bottom: 110%; /* 아이콘 위쪽 */
+    left: 0;      /* 왼쪽 정렬로 변경 (중앙 정렬X) */
+    width: 280px; 
+    background: #1c1f2e;
+    border: 1px solid var(--primary-blue);
+    padding: 15px;
+    border-radius: 8px;
+    opacity: 0;
+    transition: 0.3s;
+    pointer-events: none;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
+.tooltip:hover .tooltip-card {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* 스탯 포인트 강조 */
+#ui-stat-points {
+    color: var(--accent-gold);
+    font-weight: bold;
+}

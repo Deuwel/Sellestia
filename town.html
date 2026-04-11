@@ -2,135 +2,218 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sellestia - Town</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Nabla&family=Noto+Sans+KR:wght@300;700&display=swap" rel="stylesheet">
-    <style>
-        /* 마을 전용 스타일 (추후 style.css로 합쳐도 됩니다) */
-        #town-screen {
-            width: 100%;
-            height: 100vh;
-            background: linear-gradient(to bottom, #030307 0%, #0a0a20 100%);
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* 마을 메인 영역 */
-        .town-main {
-            flex: 1;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            padding: 50px;
-            position: relative;
-        }
-
-        /* 거점 메뉴 카드 */
-        .town-node {
-            width: 250px;
-            height: 350px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(160, 196, 255, 0.2);
-            border-radius: 15px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-        }
-
-        .town-node:hover {
-            transform: translateY(-20px);
-            background: rgba(160, 196, 255, 0.1);
-            border-color: var(--primary-color);
-            box-shadow: 0 0 30px rgba(160, 196, 255, 0.3);
-        }
-
-        .node-icon {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            filter: drop-shadow(0 0 10px rgba(255,255,255,0.5));
-        }
-
-        .node-name {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #fff;
-            letter-spacing: 2px;
-        }
-
-        .node-desc {
-            font-size: 0.9rem;
-            color: rgba(255,255,255,0.5);
-            margin-top: 10px;
-            text-align: center;
-            padding: 0 20px;
-        }
-
-        /* 전투 시작 버튼 (특별 강조) */
-        .battle-node {
-            border-color: #ff4d4d;
-        }
-        .battle-node:hover {
-            border-color: #ff4d4d;
-            box-shadow: 0 0 30px rgba(255, 77, 77, 0.4);
-        }
-    </style>
+    <link rel="stylesheet" href="town.css"> <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div id="town-screen">
-        <header class="status-bar">
-            <div class="player-info">
-                <span class="label">LV.</span>
-                <span id="player-level">1</span>
-                <span class="label" style="margin-left: 15px;">HP</span>
-                <span id="player-hp">100 / 100</span>
-            </div>
-            <div class="location-info">
-                <span id="current-location">안식의 마을, 셀레스티아</span>
-            </div>
-            <div class="exp-info">
-                <span class="label">EXP</span>
-                <span id="player-exp">0%</span>
-            </div>
-        </header>
 
-        <main class="town-main">
-            <div class="town-node" onclick="alert('HP가 회복되었습니다!')">
-                <div class="node-icon">🌙</div>
-                <div class="node-name">달빛 여관</div>
-                <div class="node-desc">깊은 잠을 통해 지친 몸을 회복합니다.</div>
+    <header class="status-bar">
+        <div class="player-brief">
+            <span style="color:var(--primary-blue)">LV.</span> <span id="player-level">1</span>
+            <span style="margin-left:15px; color:var(--primary-blue)">HP</span> <span id="player-hp">100 / 100</span>
+        </div>
+        <div style="font-weight:bold;">안식의 마을, 셀레스티아</div>
+        <div class="exp-brief"><span style="color:var(--primary-blue)">EXP</span> <span id="player-exp">0%</span></div>
+    </header>
+
+    <div class="town-wrapper">
+        <aside class="panel char-info-panel">
+            <div style="text-align:center; margin-bottom:20px;">
+                <div style="width:100px; height:100px; background:#252839; border:3px solid var(--primary-blue); border-radius:50%; margin:0 auto 10px;"></div>
+                <h2 style="margin:0;">Adventurer</h2>
+                <p style="font-size:0.9rem; color:#888;">초보 모험가 | Lv.<span id="ui-level">1</span></p>
             </div>
 
-            <div class="town-node">
-                <div class="node-icon">⚒️</div>
-                <div class="node-name">성운 대장간</div>
-                <div class="node-desc">장비를 가다듬어 더 강해질 수 있습니다.</div>
+            <div style="margin-bottom:20px;">
+                <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:5px;">
+                    <span>Experience</span> <span id="ui-exp-text">0 / 20 (0%)</span>
+                </div>
+                <div style="width:100%; height:8px; background:#252839; border-radius:4px; overflow:hidden;">
+                    <div id="ui-exp-bar" style="width:0%; height:100%; background:var(--primary-blue);"></div>
+                </div>
             </div>
 
-            <div class="town-node battle-node" onclick="location.href='index.html'">
-                <div class="node-icon">⚔️</div>
-                <div class="node-name">별무리 평원</div>
-                <div class="node-desc">마을 밖으로 나가 적들과 맞섭니다.</div>
+            <h3 style="font-size:0.9rem; color:var(--primary-blue); border-bottom:1px solid #333; padding-bottom:5px;">Detailed Stats</h3>
+            <div style="font-size: 0.85rem;">
+                <div class="stat-row"><span>최대 체력 (HP)</span><span id="ui-max-hp">20</span></div>
+                <div class="stat-row"><span>공격력 (ATK)</span><span id="ui-atk">2</span></div>
+                <div class="stat-row"><span>방어력 (DEF)</span><span id="ui-def">0</span></div>
+                <div class="stat-row"><span>행동 속도 (SPD)</span><span id="ui-speed">105</span></div>
+                <div class="stat-row"><span>치명타 확률</span><span id="ui-crit-chance">6%</span></div>
+                <div class="stat-row"><span>치명타 배율</span><span id="ui-crit-dmg">1.5x</span></div>
+                <div class="stat-row"><span>체력 재생 (REG)</span><span id="ui-hp-regen">1</span></div>
             </div>
+
+            <div style="margin-top: 20px;">
+                <h3 style="font-size:0.9rem; color:var(--accent-gold); border-bottom:1px solid #333; padding-bottom:5px; display:flex; justify-content:space-between;">
+                    Base Stats <span>Point: <span id="ui-stat-points">0</span></span>
+                </h3>
+                
+                <div class="stat-row">
+                    <div class="tooltip">STR (근력) <span style="font-size:0.7rem; margin-left:5px; border:1px solid #555; padding:0 3px; cursor:help;">?</span>
+                        <div class="tooltip-card">
+                            <strong style="color:var(--primary-blue)">STR (근력)</strong><hr style="border:0; border-top:1px solid #333; margin:8px 0;">
+                            <span style="font-size:0.85rem;">물리 공격의 위력을 결정합니다.<br>1 포인트당 공격력이 0.8 상승합니다.</span>
+                        </div>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <button class="btn-circle" onclick="decreaseStat('str')">-</button>
+                        <span id="ui-base-str" style="font-weight:bold; min-width:20px; text-align:center;">1</span>
+                        <button class="btn-circle" onclick="increaseStat('str')">+</button>
+                    </div>
+                </div>
+
+                <div class="stat-row">
+                    <div class="tooltip">DEX (민첩) <span style="font-size:0.7rem; margin-left:5px; border:1px solid #555; padding:0 3px; cursor:help;">?</span>
+                        <div class="tooltip-card">
+                            <strong style="color:var(--primary-blue)">DEX (민첩)</strong><hr style="border:0; border-top:1px solid #333; margin:8px 0;">
+                            <span style="font-size:0.85rem;">행동 우선권과 공격 속도에 영향을 줍니다.<br>1 포인트당 행동 속도가 5 상승합니다.</span>
+                        </div>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <button class="btn-circle" onclick="decreaseStat('dex')">-</button>
+                        <span id="ui-base-dex" style="font-weight:bold; min-width:20px; text-align:center;">1</span>
+                        <button class="btn-circle" onclick="increaseStat('dex')">+</button>
+                    </div>
+                </div>
+
+                <div class="stat-row">
+                    <div class="tooltip">VIT (체력) <span style="font-size:0.7rem; margin-left:5px; border:1px solid #555; padding:0 3px; cursor:help;">?</span>
+                        <div class="tooltip-card">
+                            <strong style="color:var(--primary-blue)">VIT (체력)</strong><hr style="border:0; border-top:1px solid #333; margin:8px 0;">
+                            <span style="font-size:0.85rem;">생존력을 결정합니다.<br>1 포인트당 최대 HP가 5, HP 재생이 1 상승합니다.</span>
+                        </div>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <button class="btn-circle" onclick="decreaseStat('vit')">-</button>
+                        <span id="ui-base-vit" style="font-weight:bold; min-width:20px; text-align:center;">1</span>
+                        <button class="btn-circle" onclick="increaseStat('vit')">+</button>
+                    </div>
+                </div>
+
+                <div class="stat-row">
+                    <div class="tooltip">END (지구력) <span style="font-size:0.7rem; margin-left:5px; border:1px solid #555; padding:0 3px; cursor:help;">?</span>
+                        <div class="tooltip-card">
+                            <strong style="color:var(--primary-blue)">END (지구력)</strong><hr style="border:0; border-top:1px solid #333; margin:8px 0;">
+                            <span style="font-size:0.85rem;">피해를 경감합니다.<br>1 포인트당 방어력이 0.5 상승합니다.</span>
+                        </div>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <button class="btn-circle" onclick="decreaseStat('end')">-</button>
+                        <span id="ui-base-end" style="font-weight:bold; min-width:20px; text-align:center;">1</span>
+                        <button class="btn-circle" onclick="increaseStat('end')">+</button>
+                    </div>
+                </div>
+
+                <div class="stat-row">
+                    <div class="tooltip">LUK (운) <span style="font-size:0.7rem; margin-left:5px; border:1px solid #555; padding:0 3px; cursor:help;">?</span>
+                        <div class="tooltip-card">
+                            <strong style="color:var(--primary-blue)">LUK (운)</strong><hr style="border:0; border-top:1px solid #333; margin:8px 0;">
+                            <span style="font-size:0.85rem;">행운의 기회를 높입니다.<br>1 포인트당 치명타 확률이 1% 상승합니다.</span>
+                        </div>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <button class="btn-circle" onclick="decreaseStat('luk')">-</button>
+                        <span id="ui-base-luk" style="font-weight:bold; min-width:20px; text-align:center;">1</span>
+                        <button class="btn-circle" onclick="increaseStat('luk')">+</button>
+                    </div>
+                </div>
+
+                <button class="confirm-btn" onclick="confirmStats()">능력치 투자 결정</button>
+            </div>
+        </aside>
+        </aside>
+
+        <main class="panel main-content-panel">
+            <h3 style="margin-top:0;">마을 시설</h3>
+            <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:15px;">
+                <div style="background:rgba(255,255,255,0.03); padding:20px; border-radius:10px; border:1px solid var(--panel-border); text-align:center; cursor:pointer;" onclick="location.href='battle.html'">
+                    <span style="font-size:2.5rem; display:block; margin-bottom:10px;">⚔️</span>
+                    <strong>별무리 평원</strong>
+                </div>
+                </div>
         </main>
-
-        <footer style="padding: 20px; text-align: center; color: rgba(255,255,255,0.3); font-size: 0.8rem;">
-            © 2026 Sellestia. All rights reserved by Deuwel.
-        </footer>
     </div>
+</div> <script type="module">
+        import { Player } from './player.js'; // 파일 경로가 맞는지 확인하세요.
 
-    <script src="js/entities/player.js"></script>
-    <script>
-        // 마을 진입 시 플레이어 정보를 로컬 스토리지 등에서 불러와서 상단바 갱신하는 로직이 필요합니다.
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log("마을 거점에 진입했습니다.");
-            // 추후 여기에 localStorage에서 데이터를 읽어와 
-            // document.getElementById('player-level').innerText 등을 업데이트하는 코드를 넣을 예정입니다.
-        });
+        // 페이지 로드 시 실행
+        window.onload = () => {
+            initTown();
+        };
+
+        let player;
+
+        function initTown() {
+            // 2. 기존 저장된 데이터가 있다면 불러오고, 없으면 새로 생성
+            const savedData = localStorage.getItem('playerData');
+            player = new Player();
+            
+            if (savedData) {
+                const parsed = JSON.parse(savedData);
+                // 저장된 데이터를 player 객체에 덮어씌우는 작업이 필요할 수 있습니다.
+                Object.assign(player, parsed);
+            }
+
+            updateUI();
+        }
+
+        // 3. UI 업데이트 함수 (데이터 -> 화면)
+        window.updateUI = function() {
+            // 상단바 & 기본 정보
+            document.getElementById('ui-level').innerText = player.level;
+            document.getElementById('player-level').innerText = player.level;
+            document.getElementById('ui-stat-points').innerText = player.statPoints;
+
+            // 상세 스탯 (player.js의 계산 공식 반영)
+            player.updateDerivedStats(); 
+            document.getElementById('ui-max-hp').innerText = player.maxHp;
+            document.getElementById('ui-atk').innerText = player.atk;
+            document.getElementById('ui-def').innerText = player.def;
+            document.getElementById('ui-speed').innerText = player.speed;
+            document.getElementById('ui-crit-chance').innerText = player.critChance + "%";
+            document.getElementById('ui-hp-regen').innerText = player.hpRegen;
+
+            // 투자 스탯 숫자
+            document.getElementById('ui-base-str').innerText = player.baseStats.str;
+            document.getElementById('ui-base-dex').innerText = player.baseStats.dex;
+            document.getElementById('ui-base-vit').innerText = player.baseStats.vit;
+            document.getElementById('ui-base-end').innerText = player.baseStats.end;
+            document.getElementById('ui-base-luk').innerText = player.baseStats.luk;
+
+            // 경험치 바
+            const expPercent = (player.exp / player.maxExp) * 100;
+            document.getElementById('ui-exp-bar').style.width = expPercent + "%";
+            document.getElementById('ui-exp-text').innerText = `${player.exp} / ${player.maxExp} (${expPercent}%)`;
+        }
+
+        // 4. 스탯 조정 함수들 (window 객체에 할당해야 HTML 버튼에서 인식함)
+        window.increaseStat = function(statName) {
+            if (player.statPoints > 0) {
+                player.baseStats[statName]++;
+                player.statPoints--;
+                updateUI();
+            } else {
+                alert("남은 스탯 포인트가 없습니다!");
+            }
+        }
+
+        window.decreaseStat = function(statName) {
+            // 기본값 1보다 낮아지지 않게 설정
+            if (player.baseStats[statName] > 1) {
+                player.baseStats[statName]--;
+                player.statPoints++;
+                updateUI();
+            }
+        }
+
+        // 5. 결정 버튼 - 로컬 스토리지에 최종 저장
+        window.confirmStats = function() {
+            player.updateDerivedStats();
+            localStorage.setItem('playerData', JSON.stringify(player));
+            alert("능력치가 저장되었습니다!");
+            updateUI();
+        }
     </script>
 </body>
 </html>

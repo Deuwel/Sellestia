@@ -104,5 +104,61 @@
     </div>
 
     <script type="module" src="main.js"></script>
+    <script type="module">
+        import { Player } from './src/Player.js';
+        import { Battle } from './src/Battle.js';
+        import { UI } from './src/UI.js';
+        import { DUNGEON_POOL } from './src/Monster.js';
+
+        // 1. 인스턴스 초기 생성
+        const ui = new UI();
+        let player = new Player();
+
+        /**
+         * localStorage에서 데이터를 로드하여 Player 객체에 주입
+         */
+        function loadPlayerData() {
+            const savedData = localStorage.getItem('playerData');
+            
+            if (savedData) {
+                try {
+                    const parsed = JSON.parse(savedData);
+                    
+                    // 1. 단순 값 복사 (level, exp, statPoints, potionCount 등)
+                    Object.assign(player, parsed);
+                    
+                    // 2. baseStats 객체 복사 (마을에서 투입한 포인트 정보)
+                    if (parsed.baseStats) {
+                        player.baseStats = { ...parsed.baseStats };
+                    }
+                    
+                    // 3. [중요] 스탯 기반으로 전투 능력치(atk, hp, crit 등) 재계산
+                    // player.js 내에 해당 메서드가 정의되어 있어야 합니다.
+                    if (typeof player.updateDerivedStats === 'function') {
+                        player.updateDerivedStats();
+                    }
+                    
+                    // 4. 전투용 실시간 HP를 계산된 최대 HP로 초기화
+                    player.hp = player.maxHp;
+                    
+                    console.log("✅ [데이터 로드] 마을 스탯 반영 완료:", player);
+                } catch (e) {
+                    console.error("❌ [데이터 로드] 오류 발생:", e);
+                }
+            } else {
+                console.log("ℹ️ 저장된 데이터가 없습니다. 기본 캐릭터로 시작합니다.");
+            }
+        }
+
+        // 로드 실행
+        loadPlayerData();
+
+        // 2. 배틀 객체 생성 및 던전 시작
+        // 생성자 인자 순서: (플레이어 객체, 몬스터 배열, UI 객체)
+        const battle = new Battle(player, DUNGEON_POOL, ui);
+
+        // 3. 던전 시작 (첫 번째 적 소환 및 인터벌 실행)
+        battle.startDungeon();
+    </script>
 </body>
 </html>
