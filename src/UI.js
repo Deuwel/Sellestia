@@ -140,7 +140,13 @@ export const UI = {
             card.style.filter = 'none';
         }, 600);
     },
-
+    resetTimerBar() {
+        const timerBar = document.getElementById('enemy-timer-bar'); // 실제 ID에 맞게 수정
+        if (timerBar) {
+            timerBar.style.width = '0%';
+            // 만약 CSS Transition이 걸려있다면, 리셋 시에는 잠시 끄는 것이 깔끔합니다.
+        }
+    },
     updatePotionUI(count, canUse) {
         const btn = document.getElementById('btn-potion');
         const qty = document.getElementById('potion-qty');

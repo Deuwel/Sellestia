@@ -151,14 +151,21 @@ export class Battle {
         }
     }
     startNextBattle() {
-        // 1. 적 데이터 생성 (기존 로직 사용)
+        // 1. 내부 로직용 타이머 변수 초기화 (예: 게이지 0%)
+        this.turnTimer = 0; 
+        
+        // 2. UI 상의 게이지 바 초기화 (이 부분이 핵심입니다)
+        // 깃허브 코드의 UI 관리 객체를 통해 게이지를 0으로 밀어버리세요.
+        this.ui.resetTimerBar(); 
+
+        // 3. 다음 적 데이터 로드
         this.nextEnemy(); 
         
-        // 2. UI 갱신
+        // 4. 정보 갱신
         this.ui.updateMonster(this.currentEnemy);
         this.ui.log(`⚔️ ${this.currentEnemy.name}이(가) 나타났다!`, "sys");
 
-        // 3. 전투 타이머 재시작 (이 부분이 없으면 멈춤)
+        // 5. 루프 재시작
         this.startBattleLoop(); 
     }
 
@@ -171,7 +178,7 @@ export class Battle {
             this.battleTick(); 
         }, 1000); // 1초마다 턴 진행
     }
-    
+
     endLoop(playerDied) {
         // 1. 현재 진행 중인 타이머는 확실히 정지
         if (this.battleTimer) {
