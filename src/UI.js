@@ -16,34 +16,53 @@ export const UI = {
     },
 
     updatePlayer(player) {
-        // 1. [추가] 카드 상단의 레벨과 이름 업데이트
-        if (document.getElementById('p-level')) document.getElementById('p-level').innerText = player.level;
-        if (document.getElementById('p-name')) document.getElementById('p-name').innerText = player.name;
+        // 1. 레벨 및 이름 업데이트
+        const pLevel = document.getElementById('p-level');
+        const pName = document.getElementById('p-name');
+        if (pLevel) pLevel.innerText = player.level;
+        if (pName) pName.innerText = player.name || "Adventurer";
 
-        // 2. 사이드바 정보 업데이트
-        document.getElementById('p-side-level').innerText = player.level;
-        document.getElementById('p-exp-bar').style.width = `${(player.exp / player.maxExp) * 100}%`;
-        
-        // 3. 카드 체력바 업데이트
-        document.getElementById('p-hp-bar').style.width = `${(player.hp / player.maxHp) * 100}%`;
-        // 체력 텍스트 출력 시 0 미만은 0으로 고정
-        const currentHp = Math.max(0, player.hp); 
-        document.getElementById('p-hp-text').innerText = `${Math.floor(currentHp)} / ${player.maxHp}`;
-        document.getElementById('p-hp-text').innerText = `${Math.floor(player.hp)} / ${player.maxHp}`;
-        
-        // 경험치 업데이트 
+        // 2. 사이드바 레벨 및 경험치 업데이트
+        const pSideLevel = document.getElementById('p-side-level');
+        if (pSideLevel) pSideLevel.innerText = player.level;
+
+        // 경험치 계산 및 바 업데이트
         const expPercent = Math.floor((player.exp / player.maxExp) * 100);
-        document.getElementById('p-exp-bar').style.width = `${expPercent}%`;
-        document.getElementById('p-exp-percent').innerText = `${expPercent}%`;
-        document.getElementById('p-exp-text').innerText = `EXP: ${player.exp} / ${player.maxExp}`;
+        const expBar = document.getElementById('p-exp-bar');
+        const expPercentText = document.getElementById('p-exp-percent');
+        const expText = document.getElementById('p-exp-text');
 
-        // 4. 상세 스탯 리스트 주입
-        document.getElementById('p-stats-list').innerHTML = `
-            <div class="stat-row">공격력: <strong>${player.atk}</strong></div>
-            <div class="stat-row">방어력: <strong>${player.def}</strong></div>
-            <div class="stat-row">속도: <strong>${player.speed}</strong></div>
-            <div class="stat-row">치명타: <strong>${player.critChance}%</strong></div>
-        `;
+        if (expBar) expBar.style.width = `${expPercent}%`;
+        if (expPercentText) expPercentText.innerText = `${expPercent}%`;
+        if (expText) expText.innerText = `EXP: ${player.exp} / ${player.maxExp}`;
+
+        // 3. [핵심 수정] 카드 체력바 업데이트 (hp -> currentHp로 변경)
+        const hpBar = document.getElementById('p-hp-bar');
+        const hpText = document.getElementById('p-hp-text');
+        
+        if (hpBar && hpText) {
+            // 0 미만 방지 및 정수 처리
+            const displayHp = Math.max(0, Math.floor(player.currentHp)); 
+            const hpPercent = (displayHp / player.maxHp) * 100;
+            
+            hpBar.style.width = `${hpPercent}%`;
+            hpText.innerText = `${displayHp} / ${player.maxHp}`;
+        }
+
+        // 4. 상세 스탯 리스트 주입 (소수점 첫째자리까지 표시하면 더 정확합니다)
+        const statsList = document.getElementById('p-stats-list');
+        if (statsList) {
+            statsList.innerHTML = `
+                <div class="stat-row">공격력: <strong>${Math.floor(player.atk)}</strong></div>
+                <div class="stat-row">방어력: <strong>${Math.floor(player.def)}</strong></div>
+                <div class="stat-row">속도: <strong>${Math.floor(player.speed)}</strong></div>
+                <div class="stat-row">치명타: <strong>${Math.floor(player.critChance)}%</strong></div>
+            `;
+        }
+
+        // 5. 포션 개수 업데이트
+        const potionQty = document.getElementById('p-potion-count');
+        if (potionQty) potionQty.innerText = player.potionCount;
     },
 
     updateDungeon(name, wave) {

@@ -1,29 +1,40 @@
 export class Player {
     constructor() {
-        this.name = "Adventurer";
-        this.baseStats = { str: 1, dex: 1, vit: 1, luk: 1, end: 1 };
         this.level = 1;
         this.exp = 0;
         this.maxExp = 20;
+        this.gold = 0;
+        
+        // 1. 기본 스탯 (마을에서 투자하는 수치)
+        this.baseStats = {
+            str: 0, dex: 0, vit: 0, luk: 0, end: 0
+        };
         this.statPoints = 0;
 
-        this.hp = 0;
-        this.maxHp = 0;
-        this.updateDerivedStats();
-        this.hp = this.maxHp;
-        this.potionCount = 2; // 최대 소지량 2로 변경
-        this.maxPotionCount = 2;
-        this.usedPotionInBattle = false; // 이번 전투에서 사용 여부
+        // 2. 전투 능력치 (공식에 의해 결정됨)
+        this.maxHp = 15;
+        this.currentHp = 15; // 기존 .hp에서 .currentHp로 변경
+        this.atk = 2;
+        this.def = 0;
+        this.speed = 105;
+        this.critChance = 5;
+        this.critDmg = 1.5;
+        this.hpRegen = 1;
+
+        this.potionCount = 5;
+        this.updateDerivedStats(); // 초기 계산
     }
 
     updateDerivedStats() {
-        this.maxHp = 15 + (this.baseStats.vit * 5);
-        this.atk = 2 + Math.floor(this.baseStats.str * 0.8);
-        this.def = 0 + Math.floor(this.baseStats.end * 0.5);
-        this.speed = 100 + (this.baseStats.dex * 5);
-        this.critChance = 5 + (this.baseStats.luk * 1);
-        this.critDmg = 1.5;
-        this.hpRegen = this.baseStats.vit * 1;
+// 모든 최종 능력치에 Math.floor를 씌워 정수로 만듭니다.
+        this.maxHp = Math.floor(15 + (this.baseStats.vit * 5));
+        this.atk = Math.floor(2 + (this.baseStats.str * 0.8));
+        this.def = Math.floor(this.baseStats.end * 0.5);
+        this.speed = Math.floor(100 + (this.baseStats.dex * 5));
+        this.critChance = Math.floor(5 + (this.baseStats.luk * 1));
+        
+        // currentHp가 maxHp를 넘지 않게 보정
+        if (this.currentHp > this.maxHp) this.currentHp = this.maxHp;
     }
 
     onEncounter() {
@@ -46,34 +57,33 @@ export class Player {
         return 3000 / Math.log10(this.speed / 10);
     }
 
+    // 경험치 획득 함수
     gainExp(amount) {
-        const validAmount = Number(amount) || 0;
-        this.exp = (Number(this.exp) || 0) + validAmount;
-
-        // [수정] if 대신 while을 사용하여, 남은 경험치가 maxExp보다 적어질 때까지 반복합니다.
-        // 예: 레벨업 후에도 경험치가 남으면 즉시 다음 레벨업을 진행합니다.
+        this.exp += amount;
+        
+        // 남은 경험치가 다음 레벨업 요구량보다 많다면 계속 반복
         while (this.exp >= this.maxExp) {
             this.levelUp();
         }
     }
 
+    // 레벨업 1회 수행 함수
     levelUp() {
+        this.exp -= this.maxExp; // 현재 레벨의 요구량만큼 차감
         this.level++;
         
-        // 1. 경험치 차감 (남은 경험치는 유지됨)
-        this.exp -= this.maxExp;
+        // 레벨업 시 스탯 포인트 5개 증량 (기존 포인트에 누적)
+        this.statPoints += 1; 
         
-        // 2. 다음 레벨업 요구량 증가 (기존 1.5배 로직 유지)
-        this.maxExp = Math.floor(this.maxExp * 1.5);
+        // 레벨업당 경험치 요구량 상승 (예: 이전 대비 1.2배)
+        this.maxExp = Math.floor(this.maxExp * 1.2);
         
-        // 3. 스탯 포인트 지급 및 회복
-        this.statPoints += 4;
-        this.updateDerivedStats(); // 포인트로 올린 스탯 반영 로직인 것 같네요!
-        this.hp = this.maxHp;      // 풀피 회복
+        // 스탯 변화에 따른 능력치 갱신 (maxHp 등)
+        this.updateDerivedStats();
         
-        // [추가 추천] 레벨업 로그를 UI에 남겨주면 유저가 더 좋아합니다.
-        if (this.ui) {
-            this.ui.log(`🎊 LEVEL UP! 현재 레벨: ${this.level}`, 'sys');
-        }
+        // 레벨업 시 현재 체력을 최대 체력으로 회복
+        this.currentHp = this.maxHp; 
+        
+        console.log(`🎊 Level Up! 현재 레벨: ${this.level}, 남은 EXP: ${this.exp}, 스탯 포인트: ${this.statPoints}`);
     }
 }

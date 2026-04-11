@@ -70,8 +70,6 @@ export class Battle {
 
         if (this.enemyCount === 10) {
             data.name = `${baseData.name} (BOSS)`;
-            data.hp *= 2; // 보스 체력 보정 예시
-            data.atk *= 1.5;
         }
 
         this.currentEnemy = new Monster(data);
@@ -119,7 +117,7 @@ export class Battle {
     }
 
     attack(attacker, defender, targetCardId) {
-        // 생존 확인
+        // 둘 중 하나라도 죽어있으면 공격 중단
         if (attacker.currentHp <= 0 || defender.currentHp <= 0) return;
 
         let isCrit = false;
@@ -130,10 +128,12 @@ export class Battle {
             dmg = Math.floor(dmg * (attacker.critDmg || 1.5));
         }
         
-        dmg = Math.max(1, dmg);
+        dmg = Math.max(1, Math.floor(dmg)); // 최소 1 데미지 보장
+
+        // 체력 차감 (이제 둘 다 currentHp를 사용함)
         defender.currentHp = Math.max(0, defender.currentHp - dmg);
 
-        // UI 연출
+        // UI 갱신
         this.ui.showDamage(targetCardId, dmg, isCrit);
         const type = (attacker === this.player) ? 'p' : 'm';
         this.ui.log(`${attacker.name}: ${dmg} 데미지! ${isCrit ? '💥' : ''}`, type);
